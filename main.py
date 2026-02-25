@@ -1,6 +1,5 @@
-def main():
-    print("Hello from disk2pi!")
+from disk2pi import Main
 
 
 if __name__ == "__main__":
-    main()
+    a = Main()

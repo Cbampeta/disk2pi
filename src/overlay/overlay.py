@@ -13,6 +13,7 @@ class Overlay:
 
     def __init__(self, input_file) -> None:
         self.log = logging.getLogger(__name__)
+        self.log.info("Initializing Overlay...")
         self.input_file = input_file
         self.overlay_extra = None
         self.chose_specific_overlay()
@@ -22,10 +23,13 @@ class Overlay:
         extension = self.input_file.split(".")[-1]
         if extension == "pdf":
             self.overlay_extra = PDFOverlay()
+            self.log.info("PDF file detected. Using PDFOverlay.")
         elif extension in ["jpg", "jpeg", "png"]:
             self.overlay_extra = ImageOverlay()
+            self.log.info("Image file detected. Using ImageOverlay.")
         elif extension in ["mp4", "avi", "mkv"]:
             self.overlay_extra = VideoOverlay()
+            self.log.info("Video file detected. Using VideoOverlay.")
         else:
             self.log.error(f"Unsupported file type: {extension}")
             self.overlay = None

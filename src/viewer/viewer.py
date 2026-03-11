@@ -6,27 +6,27 @@ import logging as log
 
 
 class Viewer:
-    def __init__(self, input_file) -> None:
+    def __init__(self, input_file, file_type) -> None:
         self.log = log.getLogger(__name__)
         self.log.info("Initializing Viewer...")
         self.viewer = None
         self.input_file = input_file
+        self.file_type = file_type
         self.chose_viewer(self.input_file)
 
     def chose_viewer(self, input_file) -> None:
-        extension = input_file.split(".")[-1]
-        if extension == "pdf":
+        if self.file_type == "PDF":
             self.viewer = PDFViewer(input_file)
             self.log.info("PDF file detected. Using PDFViewer.")
-        elif extension in ["jpg", "jpeg", "png"]:
+        elif self.file_type == "Image":
             self.viewer = ImageViewer(input_file)
             self.log.info("Image file detected. Using ImageViewer.")
-        elif extension in ["mp4", "avi", "mkv"]:
+        elif self.file_type == "Video":
             self.viewer = VideoViewer(input_file)
             self.log.info("Video file detected. Using VideoViewer.")
-        elif extension in ["mp3", "wav", "flac"]:
+        elif self.file_type == "Audio":
             self.viewer = AudioViewer(input_file)
             self.log.info("Audio file detected. Using AudioViewer.")
         else:
-            log.error(f"Unsupported file type: {extension}")
+            log.error(f"Unsupported file type: {self.file_type}")
             self.viewer = None

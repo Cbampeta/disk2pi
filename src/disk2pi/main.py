@@ -18,8 +18,24 @@ class Main:
         if len(args) == 1:
             self.log.info("Only one argument provided. Assuming it's the input file.")
             self.input_file = args[0]
-            self.viewer = Viewer(self.input_file)
-            self.overlay = Overlay(self.input_file)
+            extension = self.input_file.split(".")[-1]
+            if extension == "pdf":
+                file_type = "PDF"
+                self.log.info("PDF file detected.")
+            elif extension in ["jpg", "jpeg", "png"]:
+                file_type = "Image"
+                self.log.info("Image file detected.")
+            elif extension in ["mp4", "avi", "mkv"]:
+                file_type = "Video"
+                self.log.info("Video file detected.")
+            elif extension in ["mp3", "wav", "flac"]:
+                file_type = "Audio"
+                self.log.info(" Audio file detected.")
+            else:
+                self.log.error(f"Unsupported file type: {extension}")
+                return
+            self.viewer = Viewer(self.input_file, file_type)
+            self.overlay = Overlay(self.input_file, file_type)
 
         else:
             self.log.error(

@@ -12,30 +12,30 @@ class Overlay:
     And then, we will implement specific overlay functions for each type of file in their respective classes.
     """
 
-    def __init__(self, input_file) -> None:
+    def __init__(self, input_file, file_type) -> None:
         self.log = logging.getLogger(__name__)
         self.log.info("Initializing Overlay...")
         self.input_file = input_file
+        self.file_type = file_type
         self.overlay_extra = None
         self.chose_specific_overlay()
         self.basic_overlay()
 
     def chose_specific_overlay(self) -> None:
-        extension = self.input_file.split(".")[-1]
-        if extension == "pdf":
+        if self.file_type == "PDF":
             self.overlay_extra = PDFOverlay()
             self.log.info("PDF file detected. Using PDFOverlay.")
-        elif extension in ["jpg", "jpeg", "png"]:
+        elif self.file_type == "Image":
             self.overlay_extra = ImageOverlay()
             self.log.info("Image file detected. Using ImageOverlay.")
-        elif extension in ["mp4", "avi", "mkv"]:
+        elif self.file_type == "Video":
             self.overlay_extra = VideoOverlay()
             self.log.info("Video file detected. Using VideoOverlay.")
-        elif extension in ["mp3", "wav", "flac"]:
+        elif self.file_type == "Audio":
             self.overlay_extra = AudioOverlay()
-            self.log.info("Audio file detected. Using AudioOverlay.")
+            self.log.info("Using AudioOverlay.")
         else:
-            self.log.error(f"Unsupported file type: {extension}")
+            self.log.error(f"Unsupported file type: {self.file_type}")
             self.overlay = None
 
     def basic_overlay(self) -> None:

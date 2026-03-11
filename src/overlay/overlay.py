@@ -2,6 +2,7 @@ from PyQt5 import *  # to be removed, only for testing purposes
 from .video_overlay import VideoOverlay
 from .image_overlay import ImageOverlay
 from .pdf_overlay import PDFOverlay
+from .audio_overlay import AudioOverlay
 import logging
 
 
@@ -30,6 +31,9 @@ class Overlay:
         elif extension in ["mp4", "avi", "mkv"]:
             self.overlay_extra = VideoOverlay()
             self.log.info("Video file detected. Using VideoOverlay.")
+        elif extension in ["mp3", "wav", "flac"]:
+            self.overlay_extra = AudioOverlay()
+            self.log.info("Audio file detected. Using AudioOverlay.")
         else:
             self.log.error(f"Unsupported file type: {extension}")
             self.overlay = None

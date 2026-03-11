@@ -1,6 +1,7 @@
 from .pdf_viewer import PDFViewer
 from .image_viewer import ImageViewer
 from .video_viewer import VideoViewer
+from .audio_viewer import AudioViewer
 import logging as log
 
 
@@ -23,6 +24,9 @@ class Viewer:
         elif extension in ["mp4", "avi", "mkv"]:
             self.viewer = VideoViewer(input_file)
             self.log.info("Video file detected. Using VideoViewer.")
+        elif extension in ["mp3", "wav", "flac"]:
+            self.viewer = AudioViewer(input_file)
+            self.log.info("Audio file detected. Using AudioViewer.")
         else:
             log.error(f"Unsupported file type: {extension}")
             self.viewer = None

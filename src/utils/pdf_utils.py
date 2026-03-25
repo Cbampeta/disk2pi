@@ -1,5 +1,10 @@
-from PyPDF2 import *  # to change with only the necessary imports
+from typing import Literal
+
+
+from PyPDF2 import PdfReader  # to change with only the necessary imports
 import logging
+from .utils import Utils  # to change with only the necessary imports
+from disk2pi.config import OUTPUT_DIR  # to change with only the necessary imports
 
 
 class PDFUtils:
@@ -7,23 +12,25 @@ class PDFUtils:
         self.log = logging.getLogger(__name__)
         self.log.info("Initializing PDFUtils...")
 
-def changer_extension(src, nouvelle_extension):
-    position_du_point = src.index(".")  #trouve l'indice du .
-    nom_sans_extension = src[:position_du_point]
-    dst = nom_sans_extension + "." + nouvelle_extension
-    return dst
+    @staticmethod
+    def pdf_to_txt(
+        src,
+    ) -> Literal["./output/output.txt"]:  # seulement les pdf avec du vrai texte
+        output = OUTPUT_DIR + "/" + "output.txt"
+        Utils.creer_dossier(OUTPUT_DIR)  # crée le dossier de sortie s'il n'existe pas
+        Utils.creer_fichier(
+            OUTPUT_DIR + "/" + "output.txt"
+        )  # crée le fichier de sortie
 
+        reader = PdfReader(src)
+        text = ""
 
-def pdf_to_txt(src): #seulement les pdf avec du vrai texte 
-    from pypdf import PdfReader  #importe la bibliothèque pour lire les PDFs
+        for page in reader.pages:
+            text += page.extract_text() or ""
 
-    dst = changer_extension(src, "txt")  #crée le nom du fichier de sortie
-    reader = PdfReader(src)   
-    text = ""
-    for page in reader.pages:
-        text += page.extract_text() or ""
+        with (
+            open(output, "w", encoding="utf-8") as f
+        ):  # ouvre le fichier txt en mode écriture + est adapté pour les caractères spéciaux + accents
+            f.write(text)
 
-    with open(dst, "w", encoding="utf-8") as f:  #ouvre le fichier txt en mode écriture + est adapté pour les caractères spéciaux + accents
-        f.write(text)
-
-    return dst
+        return output

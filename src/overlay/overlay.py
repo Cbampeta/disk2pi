@@ -1,8 +1,14 @@
-from PyQt5 import *  # to be removed, only for testing purposes
+from PyQt6.QtWidgets import (
+    QApplication,
+    QWidget,
+)
 from .video_overlay import VideoOverlay
 from .image_overlay import ImageOverlay
 from .pdf_overlay import PDFOverlay
 from .audio_overlay import AudioOverlay
+
+
+from widget import MainWindow
 import logging
 
 
@@ -18,8 +24,15 @@ class Overlay:
         self.input_file = input_file
         self.file_type = file_type
         self.overlay_extra = None
+
+        self.app = QApplication([])
+        self.overlay = MainWindow()
+
         self.chose_specific_overlay()
         self.basic_overlay()
+
+        self.overlay.show()
+        self.app.exec()
 
     def chose_specific_overlay(self) -> None:
         if self.file_type == "PDF":

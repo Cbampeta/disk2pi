@@ -1,4 +1,4 @@
-from .pdf_viewer import PDFViewer
+from .pdf_viewer.pdf_viewer import PDFViewer
 from .image_viewer import ImageViewer
 from .video_viewer import VideoViewer
 from .audio_viewer import AudioViewer

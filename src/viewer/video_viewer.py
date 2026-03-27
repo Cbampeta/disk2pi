@@ -1,5 +1,5 @@
 import logging
-from PyQt6.QtWidgets import (
+from PySide6.QtWidgets import (
     QWidget,
     QVBoxLayout,
     QHBoxLayout,
@@ -7,9 +7,9 @@ from PyQt6.QtWidgets import (
     QFileDialog,
     QStyle,
 )
-from PyQt6.QtMultimediaWidgets import QVideoWidget
-from PyQt6.QtMultimedia import QMediaPlayer
-from PyQt6.QtCore import QUrl
+from PySide6.QtMultimediaWidgets import QVideoWidget
+from PySide6.QtMultimedia import QMediaPlayer
+from PySide6.QtCore import QUrl
 
 
 class VideoViewer(QWidget):

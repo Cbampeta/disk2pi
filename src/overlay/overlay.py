@@ -3,6 +3,7 @@ from .image_overlay import ImageOverlay
 from .pdf_overlay import PDFOverlay
 from .audio_overlay import AudioOverlay
 
+from widget import toolbar
 import logging
 
 
@@ -24,6 +25,9 @@ class Overlay:
 
         self.chose_specific_overlay()
         self.basic_overlay()
+
+        # for all type of input
+        toolbar.create_toolbar(self.mainWindow)
 
     def chose_specific_overlay(self) -> None:
         if self.file_type == "PDF":

@@ -1,5 +1,5 @@
 # importing modules for testing
-from Pyside6QtWidgets import (
+from PySide6.QtWidgets import (
     QApplication,
     QWidget,
 )

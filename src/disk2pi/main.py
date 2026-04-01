@@ -2,6 +2,7 @@
 from overlay import Overlay
 from viewer import Viewer
 import logging as log
+import disk2pi.config
 
 
 class Main:
@@ -18,6 +19,7 @@ class Main:
         if len(args) == 1:
             self.log.info("Only one argument provided. Assuming it's the input file.")
             self.input_file = args[0]
+            disk2pi.config.INPUT_FILE = args[0] 
             extension = self.input_file.split(".")[-1]
             if extension == "pdf":
                 file_type = "PDF"

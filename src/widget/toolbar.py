@@ -1,5 +1,9 @@
 from PyQt6.QtGui import QAction
 from PyQt6.QtWidgets import QToolBar, QWidgetAction
+from src.utils.image_utils import ImageUtils
+from disk2pi.config import OUTPUT_DIR  # to change with only the necessary imports
+import disk2pi.config as config
+
 
 
 def create_toolbar(self) -> None:
@@ -10,7 +14,7 @@ def create_toolbar(self) -> None:
     self.addToolBar(toolbar)
 
     # Create a button in the toolbar and connect it to the click event
-    button_action = QAction("Button", self)
+    button_action = QAction("Compress", self)
     button_action.setStatusTip("This is a button in the toolbar")
     button_action.triggered.connect(self.toolbar_button_clicked)
     toolbar.addAction(button_action)
@@ -18,3 +22,6 @@ def create_toolbar(self) -> None:
 
 def in_toolbar_button_clicked(self, s) -> None:
     print("Toolbar button clicked!", s)
+    print("compression de : ",config.INPUT_FILE)
+    ImageUtils.compress(config.INPUT_FILE,quality=1)
+

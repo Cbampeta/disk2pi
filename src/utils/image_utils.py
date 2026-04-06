@@ -31,11 +31,11 @@ class ImageUtils:
         return np.array(plus_frequente)
         #Fin IA
 
-    def remove(image_path, couleur=None, tolerance=30):
+    def remove(image_path, tolerance=30):
         img = Image.open(image_path).convert("RGBA")
         data = np.array(img)
 
-        bg = BackgroundRemover.detect_bg_color(data, couleur)
+        bg = BackgroundRemover.detect_bg_color(data)
 
         dist = np.sqrt(np.sum((data[:, :, :3].astype(float) - bg) ** 2, axis=2)) #Plus le résultat est petit, plus le pixel ressemble au fond
     

@@ -1,14 +1,9 @@
-from PyQt6.QtWidgets import (
-    QApplication,
-    QWidget,
-)
 from .video_overlay import VideoOverlay
 from .image_overlay import ImageOverlay
 from .pdf_overlay import PDFOverlay
 from .audio_overlay import AudioOverlay
 
-
-from widget import MainWindow
+from widget import toolbar
 import logging
 
 
@@ -18,21 +13,21 @@ class Overlay:
     And then, we will implement specific overlay functions for each type of file in their respective classes.
     """
 
-    def __init__(self, input_file, file_type) -> None:
+    def __init__(self, input_file, file_type, app, mainwindow) -> None:
         self.log = logging.getLogger(__name__)
         self.log.info("Initializing Overlay...")
         self.input_file = input_file
         self.file_type = file_type
         self.overlay_extra = None
 
-        self.app = QApplication([])
-        self.overlay = MainWindow()
+        self.app = app
+        self.mainWindow = mainwindow
 
         self.chose_specific_overlay()
         self.basic_overlay()
 
-        self.overlay.show()
-        self.app.exec()
+        # for all type of input
+        toolbar.create_toolbar(self.mainWindow)
 
     def chose_specific_overlay(self) -> None:
         if self.file_type == "PDF":

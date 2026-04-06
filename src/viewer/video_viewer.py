@@ -18,8 +18,11 @@ class VideoViewer(QMainWindow):
         self.setGeometry(100, 100, 800, 600)
 
         #media player and video widget
+        print("1")
         self.media_player = QMediaPlayer()
+        print("1")
         self.video_widget = QVideoWidget()
+        print("2")
         self.media_player.setVideoOutput(self.video_widget)
 
 #         #UI elements
@@ -75,8 +78,8 @@ class VideoViewer(QMainWindow):
 
 #         central_widget.setLayout(layout)
 
-# if __name__ == "__main__":
-#     app = QApplication(sys.argv)
-#     player = VideoViewer()
-#     player.show()
-#     sys.exit(app.exec())
+if __name__ == "__main__":
+    app = QApplication(sys.argv)
+    player = VideoViewer()
+    player.show()
+    sys.exit(app.exec())

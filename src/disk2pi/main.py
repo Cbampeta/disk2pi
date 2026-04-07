@@ -1,4 +1,11 @@
 # importing modules for testing
+from PySide6.QtWidgets import (
+    QApplication,
+    QWidget,
+)
+
+
+from widget import MainWindow
 from overlay import Overlay
 from viewer import Viewer
 import logging as log
@@ -34,11 +41,16 @@ class Main:
             else:
                 self.log.error(f"Unsupported file type: {extension}")
                 return
-            self.viewer = Viewer(self.input_file, file_type)
-            self.overlay = Overlay(self.input_file, file_type)
-
         else:
             self.log.error(
                 "Too many arguments provided. Exiting."
             )  # can be replaced by another action
             return
+
+        self.app = QApplication([])
+        self.main = MainWindow()
+        self.viewer = Viewer(self.input_file, file_type, self.app, self.main)
+        self.overlay = Overlay(self.input_file, file_type, self.app, self.main)
+
+        self.main.show()
+        self.app.exec()

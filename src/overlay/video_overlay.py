@@ -1,13 +1,26 @@
 import logging
 import sys
-from PyQt6.QtWidgets import (QApplication, QMainWindow, QWidget, 
-                             QVBoxLayout, QHBoxLayout, QPushButton, 
-                             QSlider, QFileDialog, QStyle)
-from PyQt6.QtMultimediaWidgets import QVideoWidget
-from PyQt6.QtMultimedia import QMediaPlayer
-from PyQt6.QtCore import Qt, QUrl
 
-class VideoOverlay(QMainWindow):
+from PySide6.QtWidgets import (
+    QWidget,
+    QVBoxLayout,
+    QHBoxLayout,
+    QPushButton,
+    QFileDialog,
+    QStyle,
+)
+from PySide6.QtMultimediaWidgets import QVideoWidget
+from PySide6.QtMultimedia import QMediaPlayer
+from PySide6.QtCore import QUrl
+
+# from PyQt6.QtWidgets import (QApplication, QMainWindow, QWidget, 
+#                              QVBoxLayout, QHBoxLayout, QPushButton, 
+#                              QSlider, QFileDialog, QStyle)
+# from PyQt6.QtMultimediaWidgets import QVideoWidget
+# from PyQt6.QtMultimedia import QMediaPlayer
+# from PyQt6.QtCore import Qt, QUrl
+
+class VideoOverlay(QWidget):
     def __init__(self, input_file=None) -> None:
         super().__init__()
         self.input_file = input_file
@@ -17,9 +30,9 @@ class VideoOverlay(QMainWindow):
 
         self.open_button = QPushButton("Open Video")
         self.play_button = QPushButton()
-        self.play_button.setIcon(QApplication.style().standardIcon(QStyle.StandardPixmap.SP_MediaPlay))
+        self.play_button.setIcon(self.style().standardIcon(QStyle.StandardPixmap.SP_MediaPlay))
         self.stop_button = QPushButton()
-        self.stop_button.setIcon(QApplication.style().standardIcon(QStyle.StandardPixmap.SP_MediaStop))
+        self.stop_button.setIcon(self.style().standardIcon(QStyle.StandardPixmap.SP_MediaStop))
 
         self.open_button.clicked.connect(self.open_file)
         self.play_button.clicked.connect(self.play_video)
@@ -52,10 +65,10 @@ class VideoOverlay(QMainWindow):
     
     def setup_ui(self):
 
-        print("3")
-        central_widget = QWidget()
-        self.setCentralWidget(central_widget)
-        print("4")
+        # print("3")
+        # central_widget = QWidget()
+        # self.setCentralWidget(central_widget)
+        # print("4")
 
         layout = QVBoxLayout()
 
@@ -65,10 +78,10 @@ class VideoOverlay(QMainWindow):
         controls_layout.addWidget(self.stop_button)
 
         layout.addLayout(controls_layout)
-        central_widget.setLayout(layout)
+        # central_widget.setLayout(layout)
 
-if __name__ == "__main__":
-    app = QApplication(sys.argv)
-    overlay = VideoOverlay()
-    overlay.show()
-    sys.exit(app.exec())
+# if __name__ == "__main__":
+#     app = QApplication(sys.argv)
+#     overlay = VideoOverlay()
+#     overlay.show()
+#     sys.exit(app.exec())

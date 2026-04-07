@@ -33,5 +33,4 @@ class PDFUtils:
         ):  # ouvre le fichier txt en mode écriture + est adapté pour les caractères spéciaux + accents
             f.write(text)
 
-    return dst
-
+        return output

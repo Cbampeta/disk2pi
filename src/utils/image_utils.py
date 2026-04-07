@@ -19,8 +19,16 @@ class ImageUtils:
         pass
 
     @staticmethod
-    def conversion() :
-        pass
+    def conversion(src,output_format = "png") :
+        img=Image.open(src)
+        output = OUTPUT_DIR + "/" + "output."+output_format
+        Utils.creer_dossier(OUTPUT_DIR)
+        Utils.creer_fichier(OUTPUT_DIR + "/" + "output."+output_format)
+        if output_format.upper() == "JPEG" and img.mode in ("RGBA", "P"):
+            img = img.convert("RGB")
+        img.save(output, format=output_format)
+        
+        return output
 
     @staticmethod
     def compress(src,quality=70,format=None) -> Literal["./output/output.*"] :

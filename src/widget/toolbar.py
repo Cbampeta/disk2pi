@@ -9,6 +9,7 @@ import disk2pi.config as config
 def create_toolbar(self) -> None:
     # We need to bind the toolbar button click event to the main window, so we can handle them
     self.toolbar_button_clicked = in_toolbar_button_clicked.__get__(self)
+    self.toolbar_button2_clicked = in_toolbar_button2_clicked.__get__(self)
 
     toolbar = QToolBar("My main toolbar")
     self.addToolBar(toolbar)
@@ -19,9 +20,23 @@ def create_toolbar(self) -> None:
     button_action.triggered.connect(self.toolbar_button_clicked)
     toolbar.addAction(button_action)
 
+    toolbar.addSeparator()
+
+    button_action2 = QAction("Convert", self)
+    button_action2.setStatusTip("Converting")
+    button_action2.triggered.connect(self.toolbar_button2_clicked)
+    toolbar.addAction(button_action2)
+
 
 def in_toolbar_button_clicked(self, s) -> None:
     print("Toolbar button clicked!", s)
     print("compression de : ",config.INPUT_FILE)
     ImageUtils.compress(config.INPUT_FILE,quality=1)
+
+
+def in_toolbar_button2_clicked(self,s) -> None:
+    print("Toolbar button clicked!", s)
+    print("Conversion de : ",config.INPUT_FILE)
+    ImageUtils.conversion(config.INPUT_FILE)
+
 

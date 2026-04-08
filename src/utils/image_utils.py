@@ -5,11 +5,18 @@ import logging
 import os
 from .utils import Utils  # to change with only the necessary imports
 from disk2pi.config import OUTPUT_DIR  # to change with only the necessary imports
+from typing import Literal
+
+
+from PIL import Image  # to change with only the necessary imports
 import logging
 import numpy as np
 import sys
 from collections import Counter
 from disk2pi.config import OUTPUT_DIR
+from PySide6.QtGui import QPixmap, QTransform
+import time
+from .utils import Utils  # to change with only the necessary imports
 
 
 class ImageUtils:
@@ -103,6 +110,30 @@ class ImageUtils:
         )  # Plus le résultat est petit, plus le pixel ressemble au fond
 
         data[:, :, 3] = np.where(dist < tolerance, 0, 255)
-
-        Image.fromarray(data).save(OUTPUT_DIR + "/resultat.png")
+        ouput = Utils.output_file_name("remove_background", "png")
+        Image.fromarray(data).save(ouput)
         log.info("ok, arrière-plan supprimé")
+
+        return ouput
+
+    @staticmethod
+    def rotate(image_path, angle=90) -> str:
+
+        log = logging.getLogger(__name__)
+
+        try:
+            img = Image.open(image_path)
+
+            # PIL tourne dans le sens anti-horaire par défaut
+            # donc on met -angle pour correspondre à "clockwise"
+            rotated = img.rotate(-angle, expand=True)
+
+            output_path = Utils.output_file_name("rotate", "png")
+            rotated.save(output_path)
+
+            log.info(f"Image rotated by {angle} degrees")
+            return output_path
+
+        except Exception as e:
+            log.error(f"Error rotating image: {e}")
+            raise

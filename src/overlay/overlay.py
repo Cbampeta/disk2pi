@@ -15,12 +15,13 @@ class Overlay:
     And then, we will implement specific overlay functions for each type of file in their respective classes.
     """
 
-    def __init__(self, input_file, file_type, app, mainwindow) -> None:
+    def __init__(self, input_file, file_type, app, mainwindow, viewer) -> None:
         self.log = logging.getLogger(__name__)
         self.log.info("Initializing Overlay...")
         self.input_file = input_file
         self.file_type = file_type
         self.overlay_extra = None
+        self.viewer = viewer.viewer
 
         self.app = app
         self.mainWindow = mainwindow
@@ -56,3 +57,11 @@ class Overlay:
         self.actExit.triggered.connect(self.mainWindow.close)
 
         self.file.addAction(self.actExit)
+
+    def update_input_file(self, caller, new_input_file):
+        self.log.info(f"Updating input file from {self.input_file} to {new_input_file}")
+        self.caller = caller
+        self.caller.input_file = new_input_file
+        self.input_file = new_input_file
+        self.viewer.input_file = new_input_file
+        self.viewer.load_file(new_input_file)

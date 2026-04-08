@@ -13,13 +13,6 @@ from PySide6.QtMultimediaWidgets import QVideoWidget
 from PySide6.QtMultimedia import QMediaPlayer
 from PySide6.QtCore import QUrl
 
-# from PyQt6.QtWidgets import (QApplication, QMainWindow, QWidget, 
-#                              QVBoxLayout, QHBoxLayout, QPushButton, 
-#                              QSlider, QFileDialog, QStyle)
-# from PyQt6.QtMultimediaWidgets import QVideoWidget
-# from PyQt6.QtMultimedia import QMediaPlayer
-# from PyQt6.QtCore import Qt, QUrl
-
 class VideoOverlay(QWidget):
     def __init__(self, input_file=None) -> None:
         super().__init__()
@@ -64,12 +57,6 @@ class VideoOverlay(QWidget):
         self.play_button.setIcon(self.style().standardIcon(QStyle.StandardPixmap.SP_MediaPlay))
     
     def setup_ui(self):
-
-        # print("3")
-        # central_widget = QWidget()
-        # self.setCentralWidget(central_widget)
-        # print("4")
-
         layout = QVBoxLayout()
 
         controls_layout = QHBoxLayout()
@@ -78,10 +65,4 @@ class VideoOverlay(QWidget):
         controls_layout.addWidget(self.stop_button)
 
         layout.addLayout(controls_layout)
-        # central_widget.setLayout(layout)
 
-# if __name__ == "__main__":
-#     app = QApplication(sys.argv)
-#     overlay = VideoOverlay()
-#     overlay.show()
-#     sys.exit(app.exec())

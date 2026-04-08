@@ -6,9 +6,11 @@ import logging as log
 
 
 class Viewer:
-    def __init__(self, input_file, file_type) -> None:
+    def __init__(self, input_file, file_type, app, mainwindow) -> None:
         self.log = log.getLogger(__name__)
         self.log.info("Initializing Viewer...")
+        self.app = app
+        self.mainwindow = mainwindow
         self.viewer = None
         self.input_file = input_file
         self.file_type = file_type
@@ -30,3 +32,5 @@ class Viewer:
         else:
             log.error(f"Unsupported file type: {self.file_type}")
             self.viewer = None
+
+        self.mainwindow.setCentralWidget(self.viewer)

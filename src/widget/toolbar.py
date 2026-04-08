@@ -1,42 +1,15 @@
-from PyQt6.QtGui import QAction
-from PyQt6.QtWidgets import QToolBar, QWidgetAction
-from src.utils.image_utils import ImageUtils
-from disk2pi.config import OUTPUT_DIR  # to change with only the necessary imports
-import disk2pi.config as config
+from PySide6.QtGui import QAction
+from PySide6.QtWidgets import QToolBar, QWidgetAction
 
 
+def create_toolbar(main_window) -> QToolBar:
+    menu_bar = main_window.menuBar()
+    toolbar = QToolBar("My main toolbar", main_window)
+    main_window.addToolBar(toolbar)
 
-def create_toolbar(self) -> None:
-    # We need to bind the toolbar button click event to the main window, so we can handle them
-    self.toolbar_button_clicked = in_toolbar_button_clicked.__get__(self)
-    self.toolbar_button2_clicked = in_toolbar_button2_clicked.__get__(self)
-
-    toolbar = QToolBar("My main toolbar")
-    self.addToolBar(toolbar)
-
-    # Create a button in the toolbar and connect it to the click event
-    button_action = QAction("Compress", self)
+    button_action = QAction("Button", main_window)
     button_action.setStatusTip("This is a button in the toolbar")
-    button_action.triggered.connect(self.toolbar_button_clicked)
+    button_action.triggered.connect(main_window.in_toolbar_button_clicked)
     toolbar.addAction(button_action)
-
-    toolbar.addSeparator()
-
-    button_action2 = QAction("Convert", self)
-    button_action2.setStatusTip("Converting")
-    button_action2.triggered.connect(self.toolbar_button2_clicked)
-    toolbar.addAction(button_action2)
-
-
-def in_toolbar_button_clicked(self, s) -> None:
-    print("Toolbar button clicked!", s)
-    print("compression de : ",config.INPUT_FILE)
-    ImageUtils.compress(config.INPUT_FILE,quality=1)
-
-
-def in_toolbar_button2_clicked(self,s) -> None:
-    print("Toolbar button clicked!", s)
-    print("Conversion de : ",config.INPUT_FILE)
-    ImageUtils.conversion(config.INPUT_FILE)
-
+    return toolbar
 

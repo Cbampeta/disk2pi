@@ -8,8 +8,9 @@ from PySide6.QtWidgets import (
     QStyle,
 )
 from PySide6.QtMultimediaWidgets import QVideoWidget
-from PySide6.QtMultimedia import QMediaPlayer
-from PySide6.QtCore import QUrl
+from PySide6.QtMultimedia import QMediaPlayer, QAudioOutput
+from PySide6.QtCore import QUrl, Qt
+from PySide6.QtWidgets import QSlider
 
 
 class VideoViewer(QWidget):
@@ -19,7 +20,18 @@ class VideoViewer(QWidget):
         self.log = logging.getLogger(__name__)
         self.log.info("Initializing VideoViewer...")
 
+        #self.setGeometry(100, 100, 600, 300)
+
         self.media_player = QMediaPlayer()
+
+        self.audio_output = QAudioOutput()
+        self.media_player.setAudioOutput(self.audio_output)
+        self.audio_output.setVolume(0.5)
+
+        self.volume_slider = QSlider(Qt.Orientation.Horizontal)
+        self.volume_slider.setRange(0, 100)   
+        self.volume_slider.setValue(50)
+
         self.video_widget = QVideoWidget()
         self.media_player.setVideoOutput(self.video_widget)
 
@@ -36,6 +48,7 @@ class VideoViewer(QWidget):
         self.open_button.clicked.connect(self.open_file)
         self.play_button.clicked.connect(self.play_video)
         self.stop_button.clicked.connect(self.stop_video)
+        self.volume_slider.valueChanged.connect(self.set_volume)
         self.setup_ui()
 
         if self.input_file:
@@ -75,6 +88,9 @@ class VideoViewer(QWidget):
         self.play_button.setIcon(
             self.style().standardIcon(QStyle.StandardPixmap.SP_MediaPlay)
         )
+    
+    def set_volume(self, value):
+        self.audio_output.setVolume(value / 100)
 
     def setup_ui(self):
         layout = QVBoxLayout()
@@ -83,8 +99,10 @@ class VideoViewer(QWidget):
         controls_layout.addWidget(self.open_button)
         controls_layout.addWidget(self.play_button)
         controls_layout.addWidget(self.stop_button)
+        controls_layout.addWidget(self.volume_slider)
 
         layout.addWidget(self.video_widget)
         layout.addLayout(controls_layout)
 
         self.setLayout(layout)
+        self.resize(400,300)

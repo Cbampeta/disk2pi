@@ -2,8 +2,6 @@ from PySide6.QtWidgets import (
     QMainWindow,
 )
 
-from .toolbar import create_toolbar
-
 
 class MainWindow(QMainWindow):
     def __init__(self):

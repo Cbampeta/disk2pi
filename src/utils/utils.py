@@ -1,5 +1,6 @@
 import logging
 import os
+import time
 
 
 class Utils:
@@ -24,3 +25,7 @@ class Utils:
         nom_sans_extension = src[:position_du_point]
         dst = nom_sans_extension + "." + nouvelle_extension
         return dst
+
+    @staticmethod
+    def output_file_name(action, extension):
+        return f"./output/{int(time.time())}_{action}.{extension}"

@@ -28,7 +28,7 @@ disk2pi is a tool that processes various types of documents.
 2. Clone the repository:
 
    ```bash
-   git clone https://github.com/your-username/disk2pi.git
+   git clone https://github.com/Cbampeta/disk2pi.git
    cd disk2pi
 
 3. Build the project:

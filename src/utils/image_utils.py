@@ -3,17 +3,11 @@ from PIL import Image
 from typing import Literal
 import logging
 import os
-from .utils import Utils  # to change with only the necessary imports
-from disk2pi.config import OUTPUT_DIR  # to change with only the necessary imports
-from typing import Literal
-
-
-from PIL import Image  # to change with only the necessary imports
 import logging
 import numpy as np
 import sys
 from collections import Counter
-from disk2pi.config import OUTPUT_DIR
+from disk2pi.config import OUTPUT_DIR, prev
 from PySide6.QtGui import QPixmap, QTransform
 import time
 from .utils import Utils  # to change with only the necessary imports
@@ -29,12 +23,15 @@ class ImageUtils:
     def decoupage ():
         pass
 
+
+
+    
+
     @staticmethod
     def conversion(src,output_format = "png") :
         img=Image.open(src)
-        output = OUTPUT_DIR + "/" + "output."+output_format
-        Utils.creer_dossier(OUTPUT_DIR)
-        Utils.creer_fichier(OUTPUT_DIR + "/" + "output."+output_format)
+        output = Utils.output_file_name("compress", output_format)
+        Utils.creer_fichier(output)
         if output_format.upper() == "JPEG" and img.mode in ("RGBA", "P"):
             img = img.convert("RGB")
         img.save(output, format=output_format)
@@ -42,7 +39,7 @@ class ImageUtils:
         return output
 
     @staticmethod
-    def compress(src,quality=70,format=None) -> Literal["./output/output.*"] :
+    def compress(src,quality=1,format=None) -> Literal["./output/output.*"] :
 
         img=Image.open(src)
 
@@ -53,9 +50,9 @@ class ImageUtils:
 
         
 
-        output = OUTPUT_DIR + "/" + "output."+save_format
-        Utils.creer_dossier(OUTPUT_DIR)
-        Utils.creer_fichier(OUTPUT_DIR + "/" + "output."+save_format)
+        output = Utils.output_file_name("compress", save_format)
+        
+        Utils.creer_fichier(output)
         
         if save_format == "PNG":
             output = output.replace(".png", ".jpg")

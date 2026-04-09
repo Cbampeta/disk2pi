@@ -27,6 +27,7 @@ class Main:
             self.log.info("Only one argument provided. Assuming it's the input file.")
             self.input_file = args[0]
             disk2pi.config.INPUT_FILE = args[0] 
+            disk2pi.config.prev.append(args[0])
             extension = self.input_file.split(".")[-1]
             if extension == "pdf":
                 file_type = "PDF"

@@ -4,7 +4,7 @@ from .image_overlay import ImageOverlay
 from .pdf_overlay import PDFOverlay
 from .audio_overlay import AudioOverlay
 from PySide6.QtGui import QAction
-from disk2pi.config import prev
+from disk2pi.config import prev, INPUT_FILE
 
 from widget import toolbar
 import logging
@@ -56,8 +56,12 @@ class Overlay:
         self.actExit.setStatusTip("Exit")
         # La méthode close est directement fournie par la classe QMainWindow.
         self.actExit.triggered.connect(self.mainWindow.close)
+        self.actCancel=QAction("Cancel",self.mainWindow)
+        self.actCancel.setShortcut("Ctrl+z")
+        self.actCancel.setStatusTip("Cancel")
+        self.actCancel.triggered.connect(self.cancel)
         
-
+        self.file.addAction(self.actCancel)
         self.file.addAction(self.actExit)
 
 
@@ -68,8 +72,12 @@ class Overlay:
         self.input_file = new_input_file
         self.viewer.input_file = new_input_file
         self.viewer.load_file(new_input_file)
+        INPUT_FILE=new_input_file
 
     def cancel(self):
-        prev.pop()
-        output_path=prev[len(prev)-1]
-        self.overlay.update_input_file(self, output_path)
+        if (len(prev)>1):
+            prev.pop()
+            output_path=prev[-1]
+            self.update_input_file(self, output_path)
+
+

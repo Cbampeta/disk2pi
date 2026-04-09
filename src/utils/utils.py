@@ -1,7 +1,8 @@
 import logging
 import os
 import time
-from disk2pi.config import prev
+from disk2pi.config import prev,OUTPUT_DIR
+
 
 
 class Utils:

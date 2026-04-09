@@ -1,10 +1,6 @@
-from typing import Literal
-
-
-from PyPDF2 import PdfReader  # to change with only the necessary imports
+from PyPDF2 import PdfReader
 import logging
-from .utils import Utils  # to change with only the necessary imports
-from disk2pi.config import OUTPUT_DIR  # to change with only the necessary imports
+from .utils import Utils
 
 
 class PDFUtils:
@@ -15,12 +11,9 @@ class PDFUtils:
     @staticmethod
     def pdf_to_txt(
         src,
-    ) -> Literal["./output/output.txt"]:  # seulement les pdf avec du vrai texte
-        output = OUTPUT_DIR + "/" + "output.txt"
-        Utils.creer_dossier(OUTPUT_DIR)  # crée le dossier de sortie s'il n'existe pas
-        Utils.creer_fichier(
-            OUTPUT_DIR + "/" + "output.txt"
-        )  # crée le fichier de sortie
+    ) -> str:  # seulement les pdf avec du vrai texte
+        output = Utils.output_file_name("pdf_to_txt", "txt")
+        Utils.creer_fichier(output)  # crée le fichier de sortie
 
         reader = PdfReader(src)
         text = ""
@@ -28,9 +21,9 @@ class PDFUtils:
         for page in reader.pages:
             text += page.extract_text() or ""
 
-        with (
-            open(output, "w", encoding="utf-8") as f
-        ):  # ouvre le fichier txt en mode écriture + est adapté pour les caractères spéciaux + accents
+        with open(
+            output, "w", encoding="utf-8"
+        ) as f:  # ouvre le fichier txt en mode écriture
             f.write(text)
 
         return output

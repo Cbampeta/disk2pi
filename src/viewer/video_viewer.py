@@ -20,7 +20,7 @@ class VideoViewer(QWidget):
         self.log = logging.getLogger(__name__)
         self.log.info("Initializing VideoViewer...")
 
-        #self.setGeometry(100, 100, 600, 300)
+        # self.setGeometry(100, 100, 600, 300)
 
         self.media_player = QMediaPlayer()
 
@@ -29,7 +29,7 @@ class VideoViewer(QWidget):
         self.audio_output.setVolume(0.5)
 
         self.volume_slider = QSlider(Qt.Orientation.Horizontal)
-        self.volume_slider.setRange(0, 100)   
+        self.volume_slider.setRange(0, 100)
         self.volume_slider.setValue(50)
 
         self.video_widget = QVideoWidget()
@@ -88,7 +88,7 @@ class VideoViewer(QWidget):
         self.play_button.setIcon(
             self.style().standardIcon(QStyle.StandardPixmap.SP_MediaPlay)
         )
-    
+
     def set_volume(self, value):
         self.audio_output.setVolume(value / 100)
 
@@ -105,4 +105,4 @@ class VideoViewer(QWidget):
         layout.addLayout(controls_layout)
 
         self.setLayout(layout)
-        self.resize(400,300)
+        self.resize(400, 300)

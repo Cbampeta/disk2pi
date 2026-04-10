@@ -14,6 +14,11 @@ class ImageOverlay:
 
     def init_conversion_panel(self):
         menu_conversion = self.menu.addMenu("&Conversion")
+        menu_conversion.addAction("Convert to pdf", lambda: self.convert(format="pdf"))
+        menu_conversion.addAction("Convert to png", lambda: self.convert(format="png"))
+        menu_conversion.addAction(
+            "Convert to jpeg", lambda: self.convert(format="jpeg")
+        )
         # menu_conversion.addAction(
         #     "Convert Image to Text", lambda: self.()
         # )
@@ -24,9 +29,23 @@ class ImageOverlay:
         menu_transform.addAction(
             "Turn Image 90° Clockwise", lambda: self.rotate_image(90)
         )
+        menu_transform.addAction("Compress", lambda: self.compress())
+
         # menu_transform.addAction(
         #     "Rotate Image", lambda: self.rotate_image()
         # )
+
+    def compress(self):
+        from utils import ImageUtils
+
+        output_file = ImageUtils.compress(self.input_file)
+        self.overlay.update_input_file(self, output_file)
+
+    def convert(self, format):
+        from utils import ImageUtils
+
+        output_file = ImageUtils.conversion(self.input_file, output_format=format)
+        self.overlay.update_input_file(self, output_file)
 
     def remove_background(self):
         from utils import ImageUtils

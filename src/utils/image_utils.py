@@ -1,12 +1,12 @@
+from PIL import Image
 from typing import Literal
-
-
-from PIL import Image  # to change with only the necessary imports
+import logging
+import os
 import logging
 import numpy as np
 import sys
 from collections import Counter
-from disk2pi.config import OUTPUT_DIR
+from disk2pi.config import OUTPUT_DIR, prev
 from PySide6.QtGui import QPixmap, QTransform
 import time
 from .utils import Utils  # to change with only the necessary imports
@@ -19,6 +19,55 @@ class ImageUtils:
         pass
 
     @staticmethod
+    def decoupage():
+        pass
+
+    @staticmethod
+    def conversion(src, output_format="png"):
+        img = Image.open(src)
+        output = Utils.output_file_name("compress", output_format)
+        Utils.creer_fichier(output)
+        if output_format.upper() == "JPEG" and img.mode in ("RGBA", "P"):
+            img = img.convert("RGB")
+        img.save(output, format=output_format)
+
+        return output
+
+    @staticmethod
+    def compress(src, quality=1, format=None) -> str:
+
+        img = Image.open(src)
+
+        save_format = format or os.path.splitext(src)[1][1:].upper()
+        if save_format == "JPG":
+            save_format = "JPEG"
+        save_kwargs = {"optimize": True}
+
+        output = Utils.output_file_name("compress", save_format)
+
+        Utils.creer_fichier(output)
+
+        if save_format == "PNG":
+            output = output.replace(".png", ".jpg")
+            save_format = "JPEG"
+
+        if save_format == "JPEG":
+            save_kwargs["quality"] = quality
+        elif save_format == "WEBP":
+            save_kwargs["quality"] = quality
+
+        img.save(output, format=save_format, **save_kwargs)
+
+        original_size = os.path.getsize(src)
+        compressed_size = os.path.getsize(output)
+        ratio = (1 - compressed_size / original_size) * 100
+
+        print(f"Original  : {original_size / 1024:.1f} KB")
+        print(f"Compressé : {compressed_size / 1024:.1f} KB")
+        print(f"Réduction : {ratio:.1f}%")
+
+        return output
+
     def detect_bg_color(data):
 
         # Récupère les 4 coins de l'image

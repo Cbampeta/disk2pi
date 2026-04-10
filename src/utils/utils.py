@@ -1,7 +1,7 @@
 import logging
 import os
 import time
-from disk2pi.config import OUTPUT_DIR  # to change with only the necessary imports
+from disk2pi.config import prev, OUTPUT_DIR
 
 
 class Utils:
@@ -29,5 +29,6 @@ class Utils:
 
     @staticmethod
     def output_file_name(action, extension):
-        Utils.creer_dossier(OUTPUT_DIR)  # crée le dossier de sortie s'il n'existe pas
-        return f"{OUTPUT_DIR}/{int(time.time())}_{action}.{extension}"
+        file_name = f"./output/{int(time.time())}_{action}.{extension}"
+        prev.append(file_name)
+        return file_name

@@ -1,4 +1,3 @@
-from PIL import *  # to change with only the necessary imports
 from PIL import Image
 from typing import Literal
 import logging
@@ -35,7 +34,7 @@ class ImageUtils:
         return output
 
     @staticmethod
-    def compress(src, quality=1, format=None) -> Literal["./output/output.*"]:
+    def compress(src, quality=1, format=None) -> str:
 
         img = Image.open(src)
 

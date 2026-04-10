@@ -1,7 +1,15 @@
 # importing modules for testing
+from PySide6.QtWidgets import (
+    QApplication,
+    QWidget,
+)
+
+
+from widget import MainWindow
 from overlay import Overlay
 from viewer import Viewer
 import logging as log
+import disk2pi.config
 
 
 class Main:
@@ -18,6 +26,8 @@ class Main:
         if len(args) == 1:
             self.log.info("Only one argument provided. Assuming it's the input file.")
             self.input_file = args[0]
+            disk2pi.config.INPUT_FILE = args[0]
+            disk2pi.config.prev.append(args[0])
             extension = self.input_file.split(".")[-1]
             if extension == "pdf":
                 file_type = "PDF"
@@ -34,11 +44,18 @@ class Main:
             else:
                 self.log.error(f"Unsupported file type: {extension}")
                 return
-            self.viewer = Viewer(self.input_file, file_type)
-            self.overlay = Overlay(self.input_file, file_type)
-
         else:
             self.log.error(
                 "Too many arguments provided. Exiting."
             )  # can be replaced by another action
             return
+
+        self.app = QApplication([])
+        self.main = MainWindow()
+        self.viewer = Viewer(self.input_file, file_type, self.app, self.main)
+        self.overlay = Overlay(
+            self.input_file, file_type, self.app, self.main, self.viewer
+        )
+
+        self.main.show()
+        self.app.exec()

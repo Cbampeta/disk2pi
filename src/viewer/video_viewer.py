@@ -1,82 +1,108 @@
 import logging
-import sys
-from PyQt6.QtWidgets import (QApplication, QMainWindow, QWidget, 
-                             QVBoxLayout, QHBoxLayout, QPushButton, 
-                             QSlider, QFileDialog, QStyle)
-from PyQt6.QtMultimediaWidgets import QVideoWidget
-from PyQt6.QtMultimedia import QMediaPlayer
-from PyQt6.QtCore import Qt, QUrl
+from PySide6.QtWidgets import (
+    QWidget,
+    QVBoxLayout,
+    QHBoxLayout,
+    QPushButton,
+    QFileDialog,
+    QStyle,
+)
+from PySide6.QtMultimediaWidgets import QVideoWidget
+from PySide6.QtMultimedia import QMediaPlayer, QAudioOutput
+from PySide6.QtCore import QUrl, Qt
+from PySide6.QtWidgets import QSlider
 
 
-class VideoViewer(QMainWindow):
+class VideoViewer(QWidget):
     def __init__(self, input_file=None):
         super().__init__()
         self.input_file = input_file
         self.log = logging.getLogger(__name__)
         self.log.info("Initializing VideoViewer...")
 
-        self.setGeometry(100, 100, 800, 600)
+        # self.setGeometry(100, 100, 600, 300)
 
-        #media player and video widget
         self.media_player = QMediaPlayer()
+
+        self.audio_output = QAudioOutput()
+        self.media_player.setAudioOutput(self.audio_output)
+        self.audio_output.setVolume(0.5)
+
+        self.volume_slider = QSlider(Qt.Orientation.Horizontal)
+        self.volume_slider.setRange(0, 100)
+        self.volume_slider.setValue(50)
+
         self.video_widget = QVideoWidget()
         self.media_player.setVideoOutput(self.video_widget)
 
-#         #UI elements
-#         self.open_button = QPushButton("Open Video")
-#         self.play_button = QPushButton()
-#         self.play_button.setIcon(self.style().standardIcon(QStyle.StandardPixmap.SP_MediaPlay))
-#         self.stop_button = QPushButton()
-#         self.stop_button.setIcon(self.style().standardIcon(QStyle.StandardPixmap.SP_MediaStop))
+        self.open_button = QPushButton("Open Video")
+        self.play_button = QPushButton()
+        self.play_button.setIcon(
+            self.style().standardIcon(QStyle.StandardPixmap.SP_MediaPlay)
+        )
+        self.stop_button = QPushButton()
+        self.stop_button.setIcon(
+            self.style().standardIcon(QStyle.StandardPixmap.SP_MediaStop)
+        )
 
-#         self.open_button.clicked.connect(self.open_file)
-#         self.play_button.clicked.connect(self.play_video)
-#         self.stop_button.clicked.connect(self.stop_video)
+        self.open_button.clicked.connect(self.open_file)
+        self.play_button.clicked.connect(self.play_video)
+        self.stop_button.clicked.connect(self.stop_video)
+        self.volume_slider.valueChanged.connect(self.set_volume)
+        self.setup_ui()
 
-#         self.setup_ui()
+        if self.input_file:
+            self.load_video(input_file)
+            self.play_video()
 
-#     def open_file(self):
-#         file_name, _ = QFileDialog.getOpenFileName(self, "Open Video File", "", "Video Files (*.mp4 *.avi *.mkv *.mov)")
+    def load_video(self, file_name):
+        video_url = QUrl.fromLocalFile(file_name)
+        self.media_player.setSource(video_url)
 
-#         if file_name:
-#             video_url = QUrl.fromLocalFile(file_name)
-#             self.media_player.setSource(video_url)
-#             self.play_button.setIcon(self.style().standardIcon(QStyle.StandardPixmap.SP_MediaPause))
-#             self.media_player.play()
+    def open_file(self):
+        file_name, _ = QFileDialog.getOpenFileName(
+            self, "Open Video File", "", "Video Files (*.mp4 *.avi *.mkv *.mov)"
+        )
 
-#     def play_video(self):
-#         """Toggle between play and pause."""
-#         if self.media_player.isPlaying():
-#             self.media_player.pause()
-#             self.play_button.setIcon(self.style().standardIcon(QStyle.StandardPixmap.SP_MediaPlay))
-#         else:
-#             self.media_player.play()
-#             self.play_button.setIcon(self.style().standardIcon(QStyle.StandardPixmap.SP_MediaPause))
+        if file_name:
+            self.load_video(file_name)
+            self.media_player.play()
+            self.play_button.setIcon(
+                self.style().standardIcon(QStyle.StandardPixmap.SP_MediaPause)
+            )
 
-#     def stop_video(self):
-#         """Stop the video playback."""
-#         self.media_player.stop()
-#         self.play_button.setIcon(self.style().standardIcon(QStyle.StandardPixmap.SP_MediaPlay))
-    
-#     def setup_ui(self):
+    def play_video(self) -> None:
+        if self.media_player.isPlaying():
+            self.media_player.pause()
+            self.play_button.setIcon(
+                self.style().standardIcon(QStyle.StandardPixmap.SP_MediaPlay)
+            )
+        else:
+            self.media_player.play()
+            self.play_button.setIcon(
+                self.style().standardIcon(QStyle.StandardPixmap.SP_MediaPause)
+            )
 
-#         central_widget = QWidget()
-#         self.setCentralWidget(central_widget)
+    def stop_video(self):
+        self.media_player.stop()
+        self.play_button.setIcon(
+            self.style().standardIcon(QStyle.StandardPixmap.SP_MediaPlay)
+        )
 
-#         layout = QVBoxLayout()
+    def set_volume(self, value):
+        self.audio_output.setVolume(value / 100)
 
-#         controls_layout = QHBoxLayout()
-#         controls_layout.addWidget(self.open_button)
-#         controls_layout.addWidget(self.play_button)
-#         controls_layout.addWidget(self.stop_button)
+    def setup_ui(self):
+        layout = QVBoxLayout()
 
-#         layout.addWidget(self.video_widget)
-#         layout.addLayout(controls_layout)
+        controls_layout = QHBoxLayout()
+        controls_layout.addWidget(self.open_button)
+        controls_layout.addWidget(self.play_button)
+        controls_layout.addWidget(self.stop_button)
+        controls_layout.addWidget(self.volume_slider)
 
-#         central_widget.setLayout(layout)
+        layout.addWidget(self.video_widget)
+        layout.addLayout(controls_layout)
 
-# if __name__ == "__main__":
-#     app = QApplication(sys.argv)
-#     player = VideoViewer()
-#     player.show()
-#     sys.exit(app.exec())
+        self.setLayout(layout)
+        self.resize(400, 300)

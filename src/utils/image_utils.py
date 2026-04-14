@@ -51,6 +51,15 @@ class ImageUtils:
             output = output.replace(".png", ".jpg")
             save_format = "JPEG"
 
+
+        if save_format == "JPEG" and img.mode == "RGBA":
+            background = Image.new("RGB", img.size, (255, 255, 255))
+            background.paste(img, mask=img.split()[3])
+            img = background
+        elif save_format == "JPEG" and img.mode != "RGB":
+            img = img.convert("RGB")
+
+
         if save_format == "JPEG":
             save_kwargs["quality"] = quality
         elif save_format == "WEBP":
@@ -67,6 +76,8 @@ class ImageUtils:
         print(f"Réduction : {ratio:.1f}%")
 
         return output
+    
+
 
     def detect_bg_color(data):
 
@@ -84,6 +95,11 @@ class ImageUtils:
         # Retourne la couleur la plus présente parmi les 4 coins
         plus_frequente = Counter(quantized).most_common(1)[0][0]
         return np.array(plus_frequente)
+
+
+    
+
+
 
     @staticmethod
     def remove(image_path, tolerance=30):

@@ -2,7 +2,8 @@ from PIL import Image
 from typing import Literal
 import logging
 import os
-import cv2
+
+# import cv2
 import logging
 import numpy as np
 import sys
@@ -52,14 +53,12 @@ class ImageUtils:
             output = output.replace(".png", ".jpg")
             save_format = "JPEG"
 
-
         if save_format == "JPEG" and img.mode == "RGBA":
             background = Image.new("RGB", img.size, (255, 255, 255))
             background.paste(img, mask=img.split()[3])
             img = background
         elif save_format == "JPEG" and img.mode != "RGB":
             img = img.convert("RGB")
-
 
         if save_format == "JPEG":
             save_kwargs["quality"] = quality
@@ -77,8 +76,6 @@ class ImageUtils:
         print(f"Réduction : {ratio:.1f}%")
 
         return output
-    
-
 
     def detect_bg_color(data):
 
@@ -96,11 +93,6 @@ class ImageUtils:
         # Retourne la couleur la plus présente parmi les 4 coins
         plus_frequente = Counter(quantized).most_common(1)[0][0]
         return np.array(plus_frequente)
-
-
-    
-
-
 
     @staticmethod
     def remove(image_path, tolerance=30):
@@ -143,32 +135,32 @@ class ImageUtils:
             log.error(f"Error rotating image: {e}")
             raise
 
-    points = []
+    # points = []
 
-    def click_event(event, x, y, flags, params):
-        if event == cv2.EVENT_LBUTTONDOWN:
-            points.append((x, y))
-            cv2.circle(img, (x, y), 5, (0, 0, 255), -1)
-            cv2.imshow("Image", img)
+    # def click_event(event, x, y, flags, params):
+    #     if event == cv2.EVENT_LBUTTONDOWN:
+    #         points.append((x, y))
+    #         cv2.circle(img, (x, y), 5, (0, 0, 255), -1)
+    #         cv2.imshow("Image", img)
 
-            if len(points) == 2:
-                point1 = np.array(points[0])
-                point2 = np.array(points[1])
-                distance = np.linalg.norm(point1 - point2)
-                cv2.line(img, points[0], points[1], (255, 0, 0), 2)
-                cv2.imshow("Image", img)
-            
-                print("Distance: " + str(distance) + " pixels")
-                points.clear()
+    #         if len(points) == 2:
+    #             point1 = np.array(points[0])
+    #             point2 = np.array(points[1])
+    #             distance = np.linalg.norm(point1 - point2)
+    #             cv2.line(img, points[0], points[1], (255, 0, 0), 2)
+    #             cv2.imshow("Image", img)
 
-    # 1. Charger l'image
-    img = cv2.imread('ton_image.jpg') 
+    #             print("Distance: " + str(distance) + " pixels")
+    #             points.clear()
 
-    # 2. Vérifier si l'image existe et lancer l'affichage
-    if img is not None:
-        cv2.imshow("Image", img) # Ouvre la fenêtre
-        cv2.setMouseCallback("Image", click_event) # Active les clics
-        cv2.waitKey(0) # Bloque le programme pour qu'il ne se ferme pas tout seul
-        cv2.destroyAllWindows() # Nettoie les fenêtres en quittant
-    else:
-        print("Erreur : Impossible de trouver l'image.")
+    # # 1. Charger l'image
+    # img = cv2.imread('ton_image.jpg')
+
+    # # 2. Vérifier si l'image existe et lancer l'affichage
+    # if img is not None:
+    #     cv2.imshow("Image", img) # Ouvre la fenêtre
+    #     cv2.setMouseCallback("Image", click_event) # Active les clics
+    #     cv2.waitKey(0) # Bloque le programme pour qu'il ne se ferme pas tout seul
+    #     cv2.destroyAllWindows() # Nettoie les fenêtres en quittant
+    # else:
+    #     print("Erreur : Impossible de trouver l'image.")

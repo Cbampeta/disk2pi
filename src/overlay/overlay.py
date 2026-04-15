@@ -4,7 +4,8 @@ from .image_overlay import ImageOverlay
 from .pdf_overlay import PDFOverlay
 from .audio_overlay import AudioOverlay
 from PySide6.QtGui import QAction
-from disk2pi.config import prev, INPUT_FILE
+#from disk2pi.config import INPUT_FILE
+import disk2pi.config
 
 from widget import toolbar
 import logging
@@ -23,7 +24,7 @@ class Overlay:
         self.file_type = file_type
         self.overlay_extra = None
         self.viewer = viewer.viewer
-
+        
         self.app = app
         self.mainWindow = mainwindow
 
@@ -70,11 +71,13 @@ class Overlay:
         self.caller.input_file = new_input_file
         self.input_file = new_input_file
         self.viewer.input_file = new_input_file
+        self.mainWindow.input_file = new_input_file
         self.viewer.load_file(new_input_file)
-        INPUT_FILE = new_input_file
+        disk2pi.config.INPUT_FILE = new_input_file
+        
 
     def cancel(self):
-        if len(prev) > 1:
-            prev.pop()
-            output_path = prev[-1]
-            self.update_input_file(self, output_path)
+        if len(disk2pi.config.prev) > 1:
+            disk2pi.config.prev.pop()
+            output_path = disk2pi.config.prev[-1]
+            self.update_input_file(self,output_path)

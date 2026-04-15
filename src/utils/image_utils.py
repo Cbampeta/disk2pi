@@ -18,6 +18,14 @@ class ImageUtils:
     def __init__(self) -> None:
         self.log = logging.getLogger(__name__)
         self.log.info("Initializing ImageUtils...")
+        self.utils_functions = {
+            "conversion": self.conversion,
+            "compress": self.compress,
+            "remove_background": self.remove,
+            "rotate": self.rotate,
+            "decoupage": self.decoupage,
+        }
+
         pass
 
     @staticmethod
@@ -25,9 +33,9 @@ class ImageUtils:
         pass
 
     @staticmethod
-    def conversion(src, output_format="png"):
-        img = Image.open(src)
-        output = Utils.output_file_name("compress", output_format)
+    def conversion(image_path, output_format="png"):
+        img = Image.open(image_path)
+        output = Utils.output_file_name("conversion", output_format)
         Utils.creer_fichier(output)
         if output_format.upper() == "JPEG" and img.mode in ("RGBA", "P"):
             img = img.convert("RGB")
@@ -36,11 +44,11 @@ class ImageUtils:
         return output
 
     @staticmethod
-    def compress(src, quality=1, format=None) -> str:
+    def compress(image_path, quality=1, format=None) -> str:
 
-        img = Image.open(src)
+        img = Image.open(image_path)
 
-        save_format = format or os.path.splitext(src)[1][1:].upper()
+        save_format = format or os.path.splitext(image_path)[1][1:].upper()
         if save_format == "JPG":
             save_format = "JPEG"
         save_kwargs = {"optimize": True}

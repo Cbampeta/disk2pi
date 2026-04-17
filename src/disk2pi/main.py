@@ -1,8 +1,5 @@
 # importing modules for testing
-from PySide6.QtWidgets import (
-    QApplication,
-    QWidget,
-)
+from PySide6.QtWidgets import QApplication
 
 
 from widget import MainWindow

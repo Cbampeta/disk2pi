@@ -1,11 +1,27 @@
-from PySide6.QtWidgets import QToolBar
+from PySide6.QtWidgets import (
+    QDialog,
+    QVBoxLayout,
+    QHBoxLayout,
+    QPushButton,
+    QLabel,
+    QLineEdit,
+    QFormLayout,
+    QMessageBox,
+)
+from PySide6.QtWidgets import QComboBox, QSpinBox, QDoubleSpinBox, QCheckBox
+from utils.pdf_utils import PDFUtils
+from utils.video_utils import VideoUtils
+from utils.image_utils import ImageUtils
+from utils.audio_utils import AudioUtils
 from .video_overlay import VideoOverlay
 from .image_overlay import ImageOverlay
 from .pdf_overlay import PDFOverlay
 from .audio_overlay import AudioOverlay
 from PySide6.QtGui import QAction
-#from disk2pi.config import INPUT_FILE
+
+# from disk2pi.config import INPUT_FILE
 import disk2pi.config
+from disk2pi.config import MINIMUM_SIZE_HEIGHT, MINIMUM_SIZE_WIDTH
 
 from widget import toolbar
 import logging
@@ -24,9 +40,11 @@ class Overlay:
         self.file_type = file_type
         self.overlay_extra = None
         self.viewer = viewer.viewer
-        
+
         self.app = app
         self.mainWindow = mainwindow
+        self.mainWindow.setWindowTitle(f"Disk2Pi - {self.input_file}")
+        self.mainWindow.setMinimumSize(MINIMUM_SIZE_WIDTH, MINIMUM_SIZE_HEIGHT)
 
         self.menu = self.mainWindow.menuBar()
 
@@ -36,15 +54,19 @@ class Overlay:
     def chose_specific_overlay(self) -> None:
         if self.file_type == "PDF":
             self.overlay_extra = PDFOverlay(self)
+            self.overlay_utils = PDFUtils()
             self.log.info("PDF file detected. Using PDFOverlay.")
         elif self.file_type == "Image":
             self.overlay_extra = ImageOverlay(self)
+            self.overlay_utils = ImageUtils()
             self.log.info("Image file detected. Using ImageOverlay.")
         elif self.file_type == "Video":
             self.overlay_extra = VideoOverlay(self)
+            self.overlay_utils = VideoUtils()
             self.log.info("Video file detected. Using VideoOverlay.")
         elif self.file_type == "Audio":
             self.overlay_extra = AudioOverlay(self)
+            self.overlay_utils = AudioUtils()
             self.log.info("Using AudioOverlay.")
         else:
             self.log.error(f"Unsupported file type: {self.file_type}")
@@ -62,8 +84,15 @@ class Overlay:
         self.actCancel.setStatusTip("Cancel")
         self.actCancel.triggered.connect(self.cancel)
 
+        # adding an extra action to the file menu for other functions that are not in the basic overlay
+
         self.file.addAction(self.actCancel)
         self.file.addAction(self.actExit)
+
+        self.extra = self.menu.addAction("Extra")
+        self.extra.triggered.connect(self.extra_overlay_action)
+        self.extra.setShortcut("Ctrl+e")
+        self.extra.setStatusTip("Extra")
 
     def update_input_file(self, caller, new_input_file):
         self.log.info(f"Updating input file from {self.input_file} to {new_input_file}")
@@ -74,10 +103,195 @@ class Overlay:
         self.mainWindow.input_file = new_input_file
         self.viewer.load_file(new_input_file)
         disk2pi.config.INPUT_FILE = new_input_file
-        
 
     def cancel(self):
         if len(disk2pi.config.prev) > 1:
             disk2pi.config.prev.pop()
             output_path = disk2pi.config.prev[-1]
-            self.update_input_file(self,output_path)
+            self.update_input_file(self, output_path)
+
+    def extra_overlay_action(self):
+        """
+        Ouvre une fenêtre listant toutes les fonctions disponibles
+        dans self.overlay_utils.utils_functions
+        """
+        if not self.overlay_utils or not hasattr(self.overlay_utils, "utils_functions"):
+            QMessageBox.warning(
+                self.mainWindow, "Erreur", "Aucune fonction supplémentaire disponible."
+            )
+            return
+
+        utils_functions = self.overlay_utils.utils_functions
+
+        dialog = QDialog(self.mainWindow)
+        dialog.setWindowTitle("Fonctions supplémentaires")
+        dialog.setModal(True)
+        dialog.resize(350, 400)
+
+        layout = QVBoxLayout()
+
+        title = QLabel("Choisissez une fonction :")
+        layout.addWidget(title)
+
+        for key, config in utils_functions.items():
+            label = config.get("label", key)
+            button = QPushButton(label)
+            button.clicked.connect(
+                lambda checked=False, name=key, cfg=config, parent_dialog=dialog: (
+                    self.on_function_clicked(name, cfg, parent_dialog)
+                )
+            )
+            layout.addWidget(button)
+
+        close_button = QPushButton("Fermer")
+        close_button.clicked.connect(dialog.close)
+        layout.addWidget(close_button)
+
+        dialog.setLayout(layout)
+        dialog.exec()
+
+    def on_function_clicked(self, func_name, func_config, parent_dialog=None):
+        """
+        Appelé quand on clique sur une fonction dans la fenêtre principale des extras.
+        """
+        params = func_config.get("params", {})
+
+        if not params:
+            if parent_dialog:
+                parent_dialog.close()
+            self.execute_overlay_function(func_name, func_config, {})
+        else:
+            self.open_parameters_dialog(func_name, func_config, parent_dialog)
+
+    def open_parameters_dialog(self, func_name, func_config, parent_dialog=None):
+        """
+        Ouvre une deuxième fenêtre pour saisir les paramètres demandés.
+        """
+        params = func_config.get("params", {})
+
+        dialog = QDialog(self.mainWindow)
+        dialog.setWindowTitle(f"Paramètres - {func_config.get('label', func_name)}")
+        dialog.setModal(True)
+        dialog.resize(400, 250)
+
+        layout = QVBoxLayout()
+        form_layout = QFormLayout()
+
+        inputs = {}
+
+        for param_name, param_config in params.items():
+            param_type = param_config.get("type", "str")
+            label = param_config.get("label", param_name)
+            default_value = param_config.get("default", "")
+
+            if param_type == "int":
+                field = QSpinBox()
+                field.setMaximum(999999)
+                field.setValue(int(default_value))
+            elif param_type == "float":
+                field = QDoubleSpinBox()
+                field.setMaximum(999999.0)
+                field.setValue(float(default_value))
+            elif param_type == "bool":
+                field = QCheckBox()
+                field.setChecked(bool(default_value))
+            elif param_type == "choice":
+                field = QComboBox()
+                choices = param_config.get("choices", [])
+                field.addItems(choices)
+                if str(default_value) in choices:
+                    field.setCurrentText(str(default_value))
+            else:
+                field = QLineEdit()
+                field.setText(str(default_value))
+
+            form_layout.addRow(label, field)
+            inputs[param_name] = {"widget": field, "type": param_type}
+
+        layout.addLayout(form_layout)
+
+        buttons_layout = QHBoxLayout()
+
+        validate_button = QPushButton("Valider")
+        cancel_button = QPushButton("Annuler")
+
+        validate_button.clicked.connect(
+            lambda: self.validate_and_execute(
+                dialog, func_name, func_config, inputs, parent_dialog
+            )
+        )
+        cancel_button.clicked.connect(
+            lambda: self.cancel_and_close(dialog, parent_dialog)
+        )
+
+        buttons_layout.addWidget(validate_button)
+        buttons_layout.addWidget(cancel_button)
+
+        layout.addLayout(buttons_layout)
+
+        dialog.setLayout(layout)
+        dialog.exec()
+
+    def cancel_and_close(self, dialog, parent_dialog=None):
+        dialog.close()
+        if parent_dialog:
+            parent_dialog.close()
+
+    def validate_and_execute(
+        self, dialog, func_name, func_config, inputs, parent_dialog=None
+    ):
+        """
+        Récupère les valeurs des champs, les convertit selon leur type,
+        puis exécute la fonction.
+        """
+        parsed_params = {}
+
+        try:
+            for param_name, data in inputs.items():
+                raw_value = data["widget"].text().strip()
+                param_type = data["type"]
+
+                if param_type == "int":
+                    parsed_params[param_name] = int(raw_value)
+                elif param_type == "float":
+                    parsed_params[param_name] = float(raw_value)
+                elif param_type == "bool":
+                    parsed_params[param_name] = raw_value.lower() in (
+                        "true",
+                        "1",
+                        "yes",
+                        "oui",
+                    )
+                else:
+                    parsed_params[param_name] = raw_value
+
+            dialog.close()
+            if parent_dialog:
+                parent_dialog.close()
+            self.execute_overlay_function(func_name, func_config, parsed_params)
+
+        except ValueError as e:
+            QMessageBox.warning(
+                self.mainWindow, "Erreur de saisie", f"Paramètre invalide : {e}"
+            )
+
+    def execute_overlay_function(self, func_name, func_config, params):
+        """
+        Exécute la fonction avec input_file + paramètres supplémentaires.
+        """
+        try:
+            func = func_config["function"]
+            self.log.info(f"Executing extra function: {func_name} with params={params}")
+
+            result = func(self.input_file, **params)
+
+            if result:
+                self.update_input_file(self, result)
+
+        except Exception as e:
+            self.log.error(f"Error while executing '{func_name}': {e}")
+            QMessageBox.critical(
+                self.mainWindow,
+                "Erreur",
+                f"Impossible d'exécuter la fonction '{func_name}'.\n\n{e}",
+            )

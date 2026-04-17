@@ -3,3 +3,6 @@ LOG_DIR = "./logs"
 
 INPUT_FILE = None
 prev = []
+
+MINIMUM_SIZE_WIDTH = 100
+MINIMUM_SIZE_HEIGHT = 100

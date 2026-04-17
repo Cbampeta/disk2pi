@@ -1,15 +1,11 @@
 from PIL import Image
-from typing import Literal
 import logging
 import os
 
 # import cv2
-import logging
 import numpy as np
-import sys
 from collections import Counter
 from disk2pi.config import OUTPUT_DIR, prev
-from PySide6.QtGui import QPixmap, QTransform
 import time
 from .utils import Utils  # to change with only the necessary imports
 
@@ -19,14 +15,50 @@ class ImageUtils:
         self.log = logging.getLogger(__name__)
         self.log.info("Initializing ImageUtils...")
         self.utils_functions = {
-            "conversion": self.conversion,
-            "compress": self.compress,
-            "remove_background": self.remove,
-            "rotate": self.rotate,
-            "decoupage": self.decoupage,
+            "conversion": {
+                "function": self.conversion,
+                "label": "Conversion",
+                "params": {
+                    "output_format": {
+                        "type": "str",
+                        "label": "Format de sortie",
+                        "default": "pdf",
+                    }
+                },
+            },
+            "compress": {
+                "function": self.compress,
+                "label": "Compression",
+                "params": {
+                    "quality": {
+                        "type": "int",
+                        "label": "Qualité (1-100)",
+                        "default": 75,
+                    }
+                },
+            },
+            "remove_background": {
+                "function": self.remove,
+                "label": "Remove Background",
+                "params": {},
+            },
+            "rotate": {
+                "function": self.rotate,
+                "label": "Rotation",
+                "params": {"angle": {"type": "int", "label": "Angle", "default": 90}},
+            },
+            "decoupage": {
+                "function": self.decoupage,
+                "label": "Découpage",
+                "params": {
+                    "x": {"type": "int", "label": "X", "default": 0},
+                    "y": {"type": "int", "label": "Y", "default": 0},
+                    "width": {"type": "int", "label": "Largeur", "default": 100},
+                    "height": {"type": "int", "label": "Hauteur", "default": 100},
+                },
+            },
+            "negate": {"function": self.negate_image, "label": "Négatif", "params": {}},
         }
-
-        pass
 
     @staticmethod
     def decoupage():
@@ -141,6 +173,24 @@ class ImageUtils:
 
         except Exception as e:
             log.error(f"Error rotating image: {e}")
+            raise
+
+    @staticmethod
+    def negate_image(image_path) -> str:
+        log = logging.getLogger(__name__)
+
+        try:
+            img = Image.open(image_path)
+            inverted = Image.eval(img, lambda x: 255 - x)
+
+            output_path = Utils.output_file_name("negate", "png")
+            inverted.save(output_path)
+
+            log.info("Image negated successfully")
+            return output_path
+
+        except Exception as e:
+            log.error(f"Error negating image: {e}")
             raise
 
     # points = []

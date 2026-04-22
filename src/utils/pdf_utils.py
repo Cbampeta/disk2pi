@@ -2,7 +2,6 @@ from PyPDF2 import PdfReader
 import logging
 from .utils import Utils
 import os
-from pypdf import PdfReader
 
 class PDFUtils:
     def __init__(self) -> None:

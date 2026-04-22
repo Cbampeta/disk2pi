@@ -1,7 +1,8 @@
 from PyPDF2 import PdfReader
 import logging
 from .utils import Utils
-
+import os
+from pypdf import PdfReader
 
 class PDFUtils:
     def __init__(self) -> None:
@@ -27,3 +28,21 @@ class PDFUtils:
             f.write(text)
 
         return output
+        
+    def html_to_pdf(source):
+    "Convertit un fichier HTML en PDF."
+    try:
+        import pdfkit
+    except ImportError:
+        os.system("pip install pdfkit --break-system-packages -q")
+        import pdfkit
+
+    output = Utils.output_file_name("html_to_pdf", "pdf")  # crée le nom du fichier de sortie
+    Utils.creer_fichier(output)                       # crée le fichier vide
+
+    with open(source, "r", encoding="utf-8") as f:  # lit le contenu html
+        contenu = f.read()
+
+    pdfkit.from_string(contenu, output)  # convertit le html en pdf
+    
+    return output

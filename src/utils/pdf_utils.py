@@ -29,13 +29,7 @@ class PDFUtils:
 
         return output
         
-    def html_to_pdf(source):
-    "Convertit un fichier HTML en PDF."
-    try:
-        import pdfkit
-    except ImportError:
-        os.system("pip install pdfkit --break-system-packages -q")
-        import pdfkit
+    def html_to_pdf(source):    
 
     output = Utils.output_file_name("html_to_pdf", "pdf")  # crée le nom du fichier de sortie
     Utils.creer_fichier(output)                       # crée le fichier vide

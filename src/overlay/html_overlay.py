@@ -1,6 +1,6 @@
 import logging
 
-from utils import PDFUtils
+from utils import HTMLUtils
 import threading
 
 

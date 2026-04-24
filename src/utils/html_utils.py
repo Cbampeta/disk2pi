@@ -1,5 +1,6 @@
 from .utils import Utils
 import pdfkit
+from pypdf import PdfReader
 
 class HTMLUTILS:
   def __init__(self) -> None:

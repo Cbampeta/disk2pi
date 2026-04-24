@@ -3,7 +3,7 @@ import pdfkit
 from PyPDF2 import PdfReader
 import logging
 
-class HTMLUTILS:
+class HTMLUtils:
   def __init__(self) -> None:
         self.log = logging.getLogger(__name__)
         self.log.info("Initializing HTMLUTILS...")

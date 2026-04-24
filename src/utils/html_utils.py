@@ -1,4 +1,5 @@
 from .utils import Utils
+import pdfkit
 
 class HTMLUTILS:
   def __init__(self) -> None:

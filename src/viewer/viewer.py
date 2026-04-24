@@ -2,6 +2,7 @@ from .pdf_viewer import PDFViewer
 from .image_viewer import ImageViewer
 from .video_viewer import VideoViewer
 from .audio_viewer import AudioViewer
+from .html_viewer import HTMLViewer
 import logging as log
 
 
@@ -23,6 +24,9 @@ class Viewer:
         elif self.file_type == "Image":
             self.viewer = ImageViewer(input_file)
             self.log.info("Image file detected. Using ImageViewer.")
+        elif self.file_type == "HTML":
+            self.viewer = HTMLViewer(input_file)
+            self.log.info("HTML file detected. Using HTMLViewer.")
         elif self.file_type == "Video":
             self.viewer = VideoViewer(input_file)
             self.log.info("Video file detected. Using VideoViewer.")

@@ -1,6 +1,8 @@
 from .utils import Utils
 import pdfkit
 from pypdf import PdfReader
+from PyPDF2 import PdfReader
+import logging
 
 class HTMLUTILS:
   def __init__(self) -> None:

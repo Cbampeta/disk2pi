@@ -5,4 +5,4 @@ from .image_utils import ImageUtils
 from .html_utils import HTMLUtils
 from .utils import Utils
 
-__all__ = ["AudioUtils", "VideoUtils", "PDFUtils", "ImageUtils", "Utils"]
+__all__ = ["AudioUtils", "VideoUtils", "PDFUtils", "ImageUtils", "Utils","HTMLUtils"]

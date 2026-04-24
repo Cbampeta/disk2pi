@@ -1,6 +1,5 @@
 from .utils import Utils
 import pdfkit
-from pypdf import PdfReader
 from PyPDF2 import PdfReader
 import logging
 

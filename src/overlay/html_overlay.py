@@ -32,7 +32,7 @@ class HTMLOverlay:
 
         def run_conversion():
             try:
-                PDFUtils.html_to_pdf(self.input_file)
+                HTMLUtils.html_to_pdf(self.input_file)
             finally:
                 self.html_to_pdf_running = False
                 self.log.info("HTML to PDF conversion finished.")

@@ -28,10 +28,11 @@ class HTMLViewer(QWidget):
         self.webView.settings().setAttribute(
             self.webView.settings().WebAttribute.PluginsEnabled, True
         )
-        self.webView.settings().setAttribute(
-            self.webView.settings().WebAttribute.HTMLViewerEnabled, True
-        )
+        # self.webView.settings().setAttribute(
+        #     self.webView.settings().WebAttribute.HTMLViewerEnabled, True
+        # )
 
+        self.webView.setHtml(input_file)
         self.search_input = SearchLineEdit(self)
 
         self.search_input.setPlaceholderText("Enter text to search...")

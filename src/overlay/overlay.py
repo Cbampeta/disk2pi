@@ -3,6 +3,7 @@ from .video_overlay import VideoOverlay
 from .image_overlay import ImageOverlay
 from .pdf_overlay import PDFOverlay
 from .audio_overlay import AudioOverlay
+from .html_overlay import HTMLOverlay
 from PySide6.QtGui import QAction
 from disk2pi.config import prev, INPUT_FILE
 
@@ -45,6 +46,9 @@ class Overlay:
         elif self.file_type == "Audio":
             self.overlay_extra = AudioOverlay(self)
             self.log.info("Using AudioOverlay.")
+        elif self.file_type == "HTML":
+            self.overlay_extra = HTMLOverlay(self)
+            self.log.info("HTML file detected. Using HTMLOverlay.")
         else:
             self.log.error(f"Unsupported file type: {self.file_type}")
             self.overlay = None

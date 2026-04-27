@@ -11,17 +11,13 @@ class HTMLUtils:
 
     @staticmethod
     def html_to_pdf(source):
-
-        output = Utils.output_file_name(
-            "html_to_pdf", "pdf"
-        )  # crée le nom du fichier de sortie
-        Utils.creer_fichier(output)  # crée le fichier vide
-
-        with open(source, "r", encoding="utf-8") as f:  # lit le contenu html
+        output = Utils.output_file_name("html_to_pdf", "pdf")
+        Utils.creer_fichier(output)
+        
+        with open(source, "r", encoding="utf-8") as f:
             contenu = f.read()
-
-        pdfkit.from_string(contenu, output)  # convertit le html en pdf
-
+            
+        pdfkit.from_string(contenu, output)
         return output
         
     @staticmethod    

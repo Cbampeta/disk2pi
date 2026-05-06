@@ -2,8 +2,8 @@ import logging
 from utils import XLSXUtils
 import threading
 
-class XLSXOverlay:
 
+class XLSXOverlay:
     def __init__(self, overlay) -> None:
         self.input_file = overlay.input_file
         self.menu = overlay.menu
@@ -28,12 +28,14 @@ class XLSXOverlay:
             return
         self.log.info("Starting XLSX to PDF conversion in a separate thread...")
         self.xlsx_to_pdf_running = True
+
         def run_conversion():
             try:
                 XLSXUtils.xlsx_to_pdf(self.input_file)
             finally:
                 self.xlsx_to_pdf_running = False
                 self.log.info("XLSX to PDF conversion finished.")
+
         threading.Thread(target=run_conversion).start()
 
     def convert_xlsx_to_csv(self):
@@ -42,10 +44,12 @@ class XLSXOverlay:
             return
         self.log.info("Starting XLSX to CSV conversion in a separate thread...")
         self.xlsx_to_csv_running = True
+
         def run_conversion():
             try:
                 XLSXUtils.xlsx_to_csv(self.input_file)
             finally:
                 self.xlsx_to_csv_running = False
                 self.log.info("XLSX to CSV conversion finished.")
+
         threading.Thread(target=run_conversion).start()

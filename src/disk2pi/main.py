@@ -44,6 +44,9 @@ class Main:
             elif extension in ["mp3", "wav", "flac"]:
                 file_type = "Audio"
                 self.log.info(" Audio file detected.")
+            elif extension in ["xlsx"]:
+                file_type = "XLSX"
+                self.log.info("XLSX file detected.")
             else:
                 self.log.error(f"Unsupported file type: {extension}")
                 return

@@ -50,7 +50,9 @@ class Main:
         self.app = QApplication([])
         self.main = MainWindow()
         self.viewer = Viewer(self.input_file, file_type, self.app, self.main)
-        self.overlay = Overlay(self.input_file, file_type, self.app, self.main)
+        self.overlay = Overlay(
+            self.input_file, file_type, self.app, self.main, self.viewer
+        )
 
         self.main.show()
         self.app.exec()

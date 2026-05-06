@@ -66,12 +66,17 @@ class ImageUtils:
 
     @staticmethod
     def conversion(image_path, output_format="png"):
+
         img = Image.open(image_path)
         output = Utils.output_file_name("conversion", output_format)
         Utils.creer_fichier(output)
         if output_format.upper() == "JPEG" and img.mode in ("RGBA", "P"):
             img = img.convert("RGB")
         img.save(output, format=output_format)
+
+        if output_format.lower() == "pdf":
+            Utils.open_file(output)
+            print(f"Image converted to PDF and saved as {output}")
 
         return output
 

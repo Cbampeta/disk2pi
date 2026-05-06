@@ -2,6 +2,7 @@ import logging
 import os
 import time
 from disk2pi.config import prev, OUTPUT_DIR
+import subprocess
 
 
 class Utils:
@@ -32,3 +33,8 @@ class Utils:
         file_name = f"./output/{int(time.time())}_{action}.{extension}"
         prev.append(file_name)
         return file_name
+
+    @staticmethod
+    def open_file(file_path):
+        subprocess.Popen(["uv", "run", "main.py", file_path])
+        logging.info(f"Opening file: {file_path} with uv run main.py")

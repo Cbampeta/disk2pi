@@ -1,6 +1,7 @@
 import logging
 import os
 import time
+from disk2pi.config import prev, OUTPUT_DIR
 
 
 class Utils:
@@ -28,4 +29,6 @@ class Utils:
 
     @staticmethod
     def output_file_name(action, extension):
-        return f"./output/{int(time.time())}_{action}.{extension}"
+        file_name = f"./output/{int(time.time())}_{action}.{extension}"
+        prev.append(file_name)
+        return file_name

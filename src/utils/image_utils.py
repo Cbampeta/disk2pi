@@ -1,12 +1,14 @@
+from PIL import Image
 from typing import Literal
+import logging
+import os
 
-
-from PIL import Image  # to change with only the necessary imports
+# import cv2
 import logging
 import numpy as np
 import sys
 from collections import Counter
-from disk2pi.config import OUTPUT_DIR
+from disk2pi.config import OUTPUT_DIR, prev
 from PySide6.QtGui import QPixmap, QTransform
 import time
 from .utils import Utils  # to change with only the necessary imports
@@ -19,6 +21,62 @@ class ImageUtils:
         pass
 
     @staticmethod
+    def decoupage():
+        pass
+
+    @staticmethod
+    def conversion(src, output_format="png"):
+        img = Image.open(src)
+        output = Utils.output_file_name("compress", output_format)
+        Utils.creer_fichier(output)
+        if output_format.upper() == "JPEG" and img.mode in ("RGBA", "P"):
+            img = img.convert("RGB")
+        img.save(output, format=output_format)
+
+        return output
+
+    @staticmethod
+    def compress(src, quality=1, format=None) -> str:
+
+        img = Image.open(src)
+
+        save_format = format or os.path.splitext(src)[1][1:].upper()
+        if save_format == "JPG":
+            save_format = "JPEG"
+        save_kwargs = {"optimize": True}
+
+        output = Utils.output_file_name("compress", save_format)
+
+        Utils.creer_fichier(output)
+
+        if save_format == "PNG":
+            output = output.replace(".png", ".jpg")
+            save_format = "JPEG"
+
+        if save_format == "JPEG" and img.mode == "RGBA":
+            background = Image.new("RGB", img.size, (255, 255, 255))
+            background.paste(img, mask=img.split()[3])
+            img = background
+        elif save_format == "JPEG" and img.mode != "RGB":
+            img = img.convert("RGB")
+
+        if save_format == "JPEG":
+            save_kwargs["quality"] = quality
+        elif save_format == "WEBP":
+            save_kwargs["quality"] = quality
+
+        img.save(output, format=save_format, **save_kwargs)
+
+        original_size = os.path.getsize(src)
+        compressed_size = os.path.getsize(output)
+        ratio = (1 - compressed_size / original_size) * 100
+
+        print(f"Original  : {original_size / 1024:.1f} KB")
+        print(f"Compressé : {compressed_size / 1024:.1f} KB")
+        print(f"Réduction : {ratio:.1f}%")
+
+        return output
+
     def detect_bg_color(data):
 
         # Récupère les 4 coins de l'image
@@ -76,3 +134,33 @@ class ImageUtils:
         except Exception as e:
             log.error(f"Error rotating image: {e}")
             raise
+
+    # points = []
+
+    # def click_event(event, x, y, flags, params):
+    #     if event == cv2.EVENT_LBUTTONDOWN:
+    #         points.append((x, y))
+    #         cv2.circle(img, (x, y), 5, (0, 0, 255), -1)
+    #         cv2.imshow("Image", img)
+
+    #         if len(points) == 2:
+    #             point1 = np.array(points[0])
+    #             point2 = np.array(points[1])
+    #             distance = np.linalg.norm(point1 - point2)
+    #             cv2.line(img, points[0], points[1], (255, 0, 0), 2)
+    #             cv2.imshow("Image", img)
+
+    #             print("Distance: " + str(distance) + " pixels")
+    #             points.clear()
+
+    # # 1. Charger l'image
+    # img = cv2.imread('ton_image.jpg')
+
+    # # 2. Vérifier si l'image existe et lancer l'affichage
+    # if img is not None:
+    #     cv2.imshow("Image", img) # Ouvre la fenêtre
+    #     cv2.setMouseCallback("Image", click_event) # Active les clics
+    #     cv2.waitKey(0) # Bloque le programme pour qu'il ne se ferme pas tout seul
+    #     cv2.destroyAllWindows() # Nettoie les fenêtres en quittant
+    # else:
+    #     print("Erreur : Impossible de trouver l'image.")

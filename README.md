@@ -1,6 +1,6 @@
 # disk2pi
 
-disk2pi is a tool that processes various types of documents and prepares them for use on a Raspberry Pi.
+disk2pi is a tool that processes various types of documents. 
 
 ## Features
 
@@ -8,7 +8,7 @@ disk2pi is a tool that processes various types of documents and prepares them fo
   - PDF documents
   - Videos (`.mp4`)
   - Images (`.png`)
-- Simple command-line interface
+- Simple interface using PySide6
 - Fast build and execution using `uv`
 
 > ⚠️ Audio files are not supported yet.
@@ -17,12 +17,6 @@ disk2pi is a tool that processes various types of documents and prepares them fo
 
 ## Getting Started
 
-### Prerequisites
-
-- Python 3.10+
-- [`uv`](https://docs.astral.sh/uv/getting-started/installation/) installed
-
----
 
 ### Installation
 
@@ -34,7 +28,7 @@ disk2pi is a tool that processes various types of documents and prepares them fo
 2. Clone the repository:
 
    ```bash
-   git clone https://github.com/your-username/disk2pi.git
+   git clone https://github.com/Cbampeta/disk2pi.git
    cd disk2pi
 
 3. Build the project:

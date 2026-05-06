@@ -112,7 +112,7 @@ class VideoViewer(QWidget):
         self.play_button.setIcon(
             self.style().standardIcon(QStyle.StandardPixmap.SP_MediaPlay)
         )
-    
+
     def set_volume(self, value):
         self.audio_output.setVolume(value / 100)
 

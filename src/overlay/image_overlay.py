@@ -1,4 +1,5 @@
 import logging
+import disk2pi.config
 
 
 class ImageOverlay:
@@ -14,6 +15,9 @@ class ImageOverlay:
 
     def init_conversion_panel(self):
         menu_conversion = self.menu.addMenu("&Conversion")
+        menu_conversion.addAction("Convert to pdf", lambda: self.convert(format="pdf"))
+        menu_conversion.addAction("Convert to png", lambda: self.convert(format="png"))
+        menu_conversion.addAction("Convert to jpeg", lambda: self.convert(format="jpeg"))
         # menu_conversion.addAction(
         #     "Convert Image to Text", lambda: self.()
         # )
@@ -24,15 +28,31 @@ class ImageOverlay:
         menu_transform.addAction(
             "Turn Image 90° Clockwise", lambda: self.rotate_image(90)
         )
+        menu_transform.addAction("Compress", lambda: self.compress())
+
+
         # menu_transform.addAction(
         #     "Rotate Image", lambda: self.rotate_image()
         # )
+
+    def compress(self):
+        from utils import ImageUtils
+
+        output_file = ImageUtils.compress(disk2pi.config.INPUT_FILE)
+        self.overlay.update_input_file(self, output_file)
+
+
+    def convert(self, format):
+        from utils import ImageUtils
+
+        output_file = ImageUtils.conversion(self.input_file, output_format=format)
+        self.overlay.update_input_file(self, output_file)
 
     def remove_background(self):
         from utils import ImageUtils
 
         output_file = ImageUtils.remove(
-            self.input_file,
+            disk2pi.config.INPUT_FILE,
         )
 
         self.overlay.update_input_file(self, output_file)
@@ -40,6 +60,6 @@ class ImageOverlay:
     def rotate_image(self, angle=90):
         from utils import ImageUtils
 
-        output_file = ImageUtils.rotate(self.input_file, angle)
+        output_file = ImageUtils.rotate(disk2pi.config.INPUT_FILE, angle)
 
         self.overlay.update_input_file(self, output_file)

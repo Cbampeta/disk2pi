@@ -1,7 +1,7 @@
 import logging
 import os
 import time
-from disk2pi.config import prev, OUTPUT_DIR
+from disk2pi.config import prev, MY_DIR
 import subprocess
 
 
@@ -33,6 +33,10 @@ class Utils:
         file_name = f"./output/{int(time.time())}_{action}.{extension}"
         prev.append(file_name)
         return file_name
+
+    @staticmethod
+    def open_output_file(file_path):
+        Utils.open_file(MY_DIR + file_path[2:])
 
     @staticmethod
     def open_file(file_path):

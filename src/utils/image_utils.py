@@ -5,7 +5,7 @@ import os
 # import cv2
 import numpy as np
 from collections import Counter
-from disk2pi.config import OUTPUT_DIR, prev
+from disk2pi.config import MY_DIR, OUTPUT_DIR
 import time
 from .utils import Utils  # to change with only the necessary imports
 
@@ -75,7 +75,7 @@ class ImageUtils:
         img.save(output, format=output_format)
 
         if output_format.lower() == "pdf":
-            Utils.open_file(output)
+            Utils.open_output_file(output)
             print(f"Image converted to PDF and saved as {output}")
 
         return output

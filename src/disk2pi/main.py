@@ -2,6 +2,7 @@
 from PySide6.QtWidgets import QApplication
 
 
+from utils import Utils
 from widget import MainWindow
 from overlay import Overlay
 from viewer import Viewer
@@ -22,9 +23,11 @@ class Main:
             return
         if len(args) == 1:
             self.log.info("Only one argument provided. Assuming it's the input file.")
-            self.input_file = args[0]
-            disk2pi.config.INPUT_FILE = args[0]
-            disk2pi.config.prev.append(args[0])
+            self.first_input_file = args[0]
+            self.input_file = disk2pi.config.OUTPUT_DIR + "/" + args[0].split("/")[-1]
+            Utils.save_file(args[0], self.input_file)
+            disk2pi.config.INPUT_FILE = self.input_file
+            disk2pi.config.prev.append(self.input_file)
             extension = self.input_file.split(".")[-1]
             if extension == "pdf":
                 file_type = "PDF"
@@ -51,7 +54,12 @@ class Main:
         self.main = MainWindow()
         self.viewer = Viewer(self.input_file, file_type, self.app, self.main)
         self.overlay = Overlay(
-            self.input_file, file_type, self.app, self.main, self.viewer
+            self.first_input_file,
+            self.input_file,
+            file_type,
+            self.app,
+            self.main,
+            self.viewer,
         )
 
         self.main.show()

@@ -13,6 +13,7 @@ from utils.pdf_utils import PDFUtils
 from utils.video_utils import VideoUtils
 from utils.image_utils import ImageUtils
 from utils.audio_utils import AudioUtils
+from utils.utils import Utils
 from .video_overlay import VideoOverlay
 from .image_overlay import ImageOverlay
 from .pdf_overlay import PDFOverlay
@@ -33,9 +34,12 @@ class Overlay:
     And then, we will implement specific overlay functions for each type of file in their respective classes.
     """
 
-    def __init__(self, input_file, file_type, app, mainwindow, viewer) -> None:
+    def __init__(
+        self, first_input_file, input_file, file_type, app, mainwindow, viewer
+    ) -> None:
         self.log = logging.getLogger(__name__)
         self.log.info("Initializing Overlay...")
+        self.first_input_file = first_input_file
         self.input_file = input_file
         self.file_type = file_type
         self.overlay_extra = None
@@ -84,8 +88,16 @@ class Overlay:
         self.actCancel.setStatusTip("Cancel")
         self.actCancel.triggered.connect(self.cancel)
 
+        self.actSave = QAction("Save", self.mainWindow)
+        self.actSave.setShortcut("Ctrl+s")
+        self.actSave.setStatusTip("Save")
+        self.actSave.triggered.connect(
+            lambda: Utils.save_file(self.input_file, self.first_input_file)
+        )
+
         # adding an extra action to the file menu for other functions that are not in the basic overlay
 
+        self.file.addAction(self.actSave)
         self.file.addAction(self.actCancel)
         self.file.addAction(self.actExit)
 

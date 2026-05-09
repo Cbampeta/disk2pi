@@ -11,7 +11,6 @@ from PySide6.QtMultimediaWidgets import QVideoWidget
 from PySide6.QtMultimedia import QMediaPlayer, QAudioOutput
 from PySide6.QtCore import QUrl, Qt
 from PySide6.QtWidgets import QSlider, QSizePolicy, QToolButton
-from PySide6.QtGui import QIcon
 
 
 class VideoViewer(QWidget):

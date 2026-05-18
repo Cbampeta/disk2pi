@@ -8,6 +8,7 @@ from overlay import Overlay
 from viewer import Viewer
 import logging as log
 import disk2pi.config
+import sys
 
 
 class Main:
@@ -64,3 +65,12 @@ class Main:
 
         self.main.show()
         self.app.exec()
+
+
+def main():
+    log.basicConfig(level=log.INFO)
+    Main(sys.argv[1:])
+
+
+if __name__ == "__main__":
+    main()

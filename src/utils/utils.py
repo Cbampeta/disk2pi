@@ -1,7 +1,7 @@
 import logging
 import os
 import time
-from disk2pi.config import prev, MY_DIR
+from config.config import prev, MY_DIR
 import subprocess
 import shutil
 

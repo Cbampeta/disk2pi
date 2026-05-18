@@ -20,9 +20,9 @@ from .pdf_overlay import PDFOverlay
 from .audio_overlay import AudioOverlay
 from PySide6.QtGui import QAction
 
-# from disk2pi.config import INPUT_FILE
-import disk2pi.config
-from disk2pi.config import MINIMUM_SIZE_HEIGHT, MINIMUM_SIZE_WIDTH
+# from config.config import INPUT_FILE
+import config.config
+from config.config import MINIMUM_SIZE_HEIGHT, MINIMUM_SIZE_WIDTH
 
 from widget import toolbar
 import logging
@@ -114,12 +114,12 @@ class Overlay:
         self.viewer.input_file = new_input_file
         self.mainWindow.input_file = new_input_file
         self.viewer.load_file(new_input_file)
-        disk2pi.config.INPUT_FILE = new_input_file
+        config.config.INPUT_FILE = new_input_file
 
     def cancel(self):
-        if len(disk2pi.config.prev) > 1:
-            disk2pi.config.prev.pop()
-            output_path = disk2pi.config.prev[-1]
+        if len(config.config.prev) > 1:
+            config.config.prev.pop()
+            output_path = config.config.prev[-1]
             self.update_input_file(self, output_path)
 
     def extra_overlay_action(self):

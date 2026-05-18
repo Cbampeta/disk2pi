@@ -5,8 +5,6 @@ import os
 # import cv2
 import numpy as np
 from collections import Counter
-from disk2pi.config import MY_DIR, OUTPUT_DIR
-import time
 from .utils import Utils  # to change with only the necessary imports
 
 
@@ -112,7 +110,7 @@ class ImageUtils:
 
         img.save(output, format=save_format, **save_kwargs)
 
-        original_size = os.path.getsize(src)
+        original_size = os.path.getsize(image_path)
         compressed_size = os.path.getsize(output)
         ratio = (1 - compressed_size / original_size) * 100
 

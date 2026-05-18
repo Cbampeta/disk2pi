@@ -8,6 +8,7 @@ from overlay import Overlay
 from viewer import Viewer
 import logging as log
 import config.config
+import sys
 
 
 class Main:
@@ -24,7 +25,7 @@ class Main:
         if len(args) == 1:
             self.log.info("Only one argument provided. Assuming it's the input file.")
             self.first_input_file = args[0]
-            self.input_file = config.config.OUTPUT_DIR + "/" + args[0].split("/")[-1]
+            self.input_file = str(config.config.OUTPUT_DIR / args[0]).split("/")[-1]
             Utils.save_file(args[0], self.input_file)
             config.config.INPUT_FILE = self.input_file
             config.config.prev.append(self.input_file)
@@ -64,3 +65,12 @@ class Main:
 
         self.main.show()
         self.app.exec()
+
+
+def main():
+    log.basicConfig(level=log.INFO)
+    Main(sys.argv[1:])
+
+
+if __name__ == "__main__":
+    main()

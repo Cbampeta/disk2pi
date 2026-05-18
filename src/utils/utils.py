@@ -31,7 +31,7 @@ class Utils:
 
     @staticmethod
     def output_file_name(action, extension):
-        file_name = f"{OUTPUT_DIR}/{int(time.time())}_{action}.{extension}"
+        file_name = OUTPUT_DIR / f"{int(time.time())}_{action}.{extension}"
         prev.append(file_name)
         return file_name
 

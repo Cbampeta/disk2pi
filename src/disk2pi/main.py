@@ -7,7 +7,7 @@ from widget import MainWindow
 from overlay import Overlay
 from viewer import Viewer
 import logging as log
-import disk2pi.config
+import config.config
 import sys
 
 
@@ -25,10 +25,10 @@ class Main:
         if len(args) == 1:
             self.log.info("Only one argument provided. Assuming it's the input file.")
             self.first_input_file = args[0]
-            self.input_file = disk2pi.config.OUTPUT_DIR + "/" + args[0].split("/")[-1]
+            self.input_file = config.config.OUTPUT_DIR + "/" + args[0].split("/")[-1]
             Utils.save_file(args[0], self.input_file)
-            disk2pi.config.INPUT_FILE = self.input_file
-            disk2pi.config.prev.append(self.input_file)
+            config.config.INPUT_FILE = self.input_file
+            config.config.prev.append(self.input_file)
             extension = self.input_file.split(".")[-1]
             if extension == "pdf":
                 file_type = "PDF"

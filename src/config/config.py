@@ -1,7 +1,10 @@
 import os
+from pathlib import Path
 
-OUTPUT_DIR = "./output"
-LOG_DIR = "./logs"
+PROJECT_ROOT = str(Path(__file__).resolve().parents[2])
+OUTPUT_DIR = str(PROJECT_ROOT + "/" + "output")
+PDF_PATH = str(OUTPUT_DIR + "/" + "ticket.pdf")
+LOG_DIR = str(PROJECT_ROOT + "/" + "logs")
 
 MY_DIR = str.split(os.path.dirname(os.path.abspath(__file__)), "/")[:-2]
 MY_DIR = "/".join(MY_DIR) + "/"

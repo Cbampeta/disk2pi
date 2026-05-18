@@ -20,3 +20,7 @@ class VideoOverlay(QWidget):
         self.input_file = input_file
         self.log = logging.getLogger(__name__)
         self.log.info("Initializing VideoOverlay...")
+
+        # self.trim_button = QPushButton("Trim")    
+        # self.extra.addAction
+        # #self.layout.addWidget(self.trim_button)

@@ -149,22 +149,22 @@ class VideoViewer(QWidget):
     def setup_ui(self):
         layout = QVBoxLayout()
 
-        video_layout = QHBoxLayout()
-        video_layout.addWidget(self.video_widget)
-        video_layout.addWidget(self.volume_slider)
+        self.video_layout = QHBoxLayout()
+        self.video_layout.addWidget(self.video_widget)
+        self.video_layout.addWidget(self.volume_slider)
 
-        controls_layout = QHBoxLayout()
+        self.controls_layout = QHBoxLayout()
         self.open_button.setFixedHeight(30)
-        controls_layout.addWidget(self.open_button)
+        self.controls_layout.addWidget(self.open_button)
         self.play_button.setFixedHeight(30)
-        controls_layout.addWidget(self.play_button)
+        self.controls_layout.addWidget(self.play_button)
         self.stop_button.setFixedHeight(30)
-        controls_layout.addWidget(self.stop_button)
+        self.controls_layout.addWidget(self.stop_button)
         self.media_slider.setFixedHeight(30)
-        controls_layout.addWidget(self.media_slider)
-        controls_layout.addWidget(self.mute_button)
+        self.controls_layout.addWidget(self.media_slider)
+        self.controls_layout.addWidget(self.mute_button)
 
-        layout.addLayout(video_layout)
-        layout.addLayout(controls_layout)
+        layout.addLayout(self.video_layout)
+        layout.addLayout(self.controls_layout)
 
         self.setLayout(layout)

@@ -1,6 +1,7 @@
-from ffmpeg import *  # to change with only the necessary imports
+import ffmpeg
 import logging
 import subprocess
+from utils import Utils
 from superqt import QRangeSlider
 
 from PySide6.QtWidgets import (
@@ -32,14 +33,25 @@ class VideoUtils:
             if not self.user_is_seeking:
                 self.trim_slider.setValue(position)
 
-        def on_change(values):
-            start_ms, end_ms = values
+    def on_change(input_file,start_ms,end_ms):
 
-            start_sec = start_ms / 1000
-            end_sec = end_ms / 1000
+        start_sec = start_ms / 1000
+        end_sec = end_ms / 1000
+            
+        input_stream = ffmpeg.input(input_file)
 
-            label.setText(
-                f"start={start_sec:.2f}s end={end_sec:.2f}s"
-          )
+        video = input_stream.video.filter('trim', ss=start_sec)
+        audio = input_stream.audio.filter('atrim', ss=start_sec)
+
+        output = Utils.output_file_name("trim", "mp4")
+
+        (
+            ffmpeg
+            .output(video, audio, output, to=end_sec, c='copy')
+            .run()
+        )
+
+        return output
+            
 
 

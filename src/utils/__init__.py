@@ -1,3 +1,4 @@
+from .video_utils import VideoUtils
 from .audio_utils import AudioUtils
 from .pdf_utils import PDFUtils
 from .image_utils import ImageUtils

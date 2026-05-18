@@ -1,7 +1,7 @@
 import logging
 import os
 import time
-from config.config import prev, MY_DIR
+from config.config import prev, MY_DIR, OUTPUT_DIR
 import subprocess
 import shutil
 
@@ -31,7 +31,7 @@ class Utils:
 
     @staticmethod
     def output_file_name(action, extension):
-        file_name = f"./output/{int(time.time())}_{action}.{extension}"
+        file_name = f"{OUTPUT_DIR}/{int(time.time())}_{action}.{extension}"
         prev.append(file_name)
         return file_name
 

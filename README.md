@@ -35,7 +35,7 @@ disk2pi is a tool that processes various types of documents.
     ```bash
     uv build
     ```
-4. Create Binaire :(on linux)
+4. Create Binaire :
     ```bash
     uv run pyinstaller --name Disk2Pi --onedir --windowed --paths src src/disk2pi/main.py
     ```

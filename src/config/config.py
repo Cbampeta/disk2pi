@@ -27,12 +27,9 @@ APP_DATA_DIR = get_app_data_dir()
 OUTPUT_DIR = APP_DATA_DIR / "output"
 OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
-PDF_PATH = str(OUTPUT_DIR / "ticket.pdf")
-LOG_DIR = str(PROJECT_ROOT / "logs")
+PDF_PATH = OUTPUT_DIR / "ticket.pdf"
+LOG_DIR = PROJECT_ROOT / "logs"
 
-OUTPUT_DIR = str(
-    OUTPUT_DIR
-)  # Convert to string for consistency with other path variables
 
 MY_DIR = str.split(os.path.dirname(os.path.abspath(__file__)), "/")[:-2]
 MY_DIR = "/".join(MY_DIR) + "/"

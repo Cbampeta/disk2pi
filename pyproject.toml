@@ -13,6 +13,7 @@ dependencies = [
     "pyqt5>=5.15.11",
     "pyqt6>=6.10.2",
     "pyside6>=6.11.0",
+    "pytest>=9.0.3",
     "python-vlc>=3.0.21203",
 ]
 

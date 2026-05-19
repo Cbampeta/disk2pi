@@ -11,7 +11,7 @@ from PySide6.QtWidgets import (
     QPushButton,
     QLabel,
     QStyle,
-    QSlider
+    QSlider,
 )
 
 from PySide6.QtMultimedia import QMediaPlayer, QAudioOutput
@@ -19,20 +19,21 @@ from PySide6.QtMultimediaWidgets import QVideoWidget
 
 from superqt import QRangeSlider
 
+
 class VideoTrimWidget(QWidget):
-    def __init__(self, input_file, duration):
+    def __init__(self, input_file, duration, video_overlay) -> None:
         super().__init__()
 
         self.input_file = input_file
         self.log = logging.getLogger(__name__)
         self.log.info("Opening VideoTrimWidget...")
         self.user_is_seeking = False
-
+        self.video_overlay = video_overlay
         self.setWindowTitle("Trim Video")
 
         layout = QVBoxLayout(self)
 
-        #video viewing inside trim widget
+        # video viewing inside trim widget
         self.media_player = QMediaPlayer()
         self.audio_output = QAudioOutput()
         self.media_player.setAudioOutput(self.audio_output)
@@ -62,7 +63,7 @@ class VideoTrimWidget(QWidget):
         self.range_label.setFixedHeight(15)
         layout.addWidget(self.range_label)
 
-        #trim slider
+        # trim slider
         self.trim_slider = QRangeSlider(Qt.Orientation.Horizontal)
 
         self.trim_slider.setRange(0, duration)
@@ -72,7 +73,7 @@ class VideoTrimWidget(QWidget):
         self.trim_slider.setFixedHeight(18)
         layout.addWidget(self.trim_slider)
 
-        #playback slider
+        # playback slider
         self.playback_slider = QSlider(Qt.Orientation.Horizontal)
 
         self.playback_slider.setRange(0, duration)
@@ -97,15 +98,12 @@ class VideoTrimWidget(QWidget):
         button_layout.addWidget(self.play_button)
         button_layout.addWidget(self.apply_button)
         button_layout.addWidget(self.cancel_button)
-        
 
         layout.addLayout(button_layout)
 
         self.update_label()
 
         self.trim_slider.sliderReleased.connect(self.seek_video)
-
-
 
     def play_video(self) -> None:
         if self.media_player.isPlaying():
@@ -121,7 +119,7 @@ class VideoTrimWidget(QWidget):
 
     def sync_playback_slider(self, position):
         self.playback_slider.setValue(position)
-    
+
     def pause_sync(self):
         self.user_is_seeking = True
 
@@ -132,7 +130,7 @@ class VideoTrimWidget(QWidget):
     def sync_playback_slider(self, position):
         if not self.user_is_seeking:
             self.playback_slider.setValue(position)
-    
+
     def seek_video(self):
         start, end = self.trim_slider.value()
 
@@ -140,7 +138,7 @@ class VideoTrimWidget(QWidget):
 
     def update_label(self):
         start, end = self.trim_slider.value()
-        length = end-start
+        length = end - start
 
         self.range_label.setText(
             f"Start: {start / 1000:.2f}s | End: {end / 1000:.2f}s | Length {length / 1000:.2f}s"
@@ -149,15 +147,11 @@ class VideoTrimWidget(QWidget):
     def apply_trim(self):
         start_ms, end_ms = self.trim_slider.value()
 
-        self.log.info(
-            f"Applying trim: {start_ms} ms -> {end_ms} ms"
-        )
+        self.log.info(f"Applying trim: {start_ms} ms -> {end_ms} ms")
 
-        output = VideoUtils.on_change(
-            self.input_file,
-            start_ms,
-            end_ms
-        )
+        output = VideoUtils.on_change(self.input_file, start_ms, end_ms)
+
+        self.video_overlay.overlay.update_input_file(self.video_overlay, output)
 
         self.log.info(f"Trimmed video saved to: {output}")
 

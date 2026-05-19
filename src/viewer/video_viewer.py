@@ -29,14 +29,14 @@ class VideoViewer(QWidget):
         self.audio_output.setVolume(0.5)
 
         self.volume_slider = QSlider(Qt.Orientation.Vertical)
-        self.volume_slider.setRange(0, 100)   
+        self.volume_slider.setRange(0, 100)
         self.volume_slider.setValue(50)
 
         self.mute_button = QToolButton()
         self.mute_button.setCheckable(True)
         self.mute_button.setIcon(
             self.style().standardIcon(QStyle.StandardPixmap.SP_MediaVolume)
-            )
+        )
         self.mute_button.setToolTip("Mute / Unmute")
 
         self.media_slider = QSlider(Qt.Orientation.Horizontal)
@@ -77,6 +77,10 @@ class VideoViewer(QWidget):
         if self.input_file:
             self.load_video(input_file)
             self.play_video()
+
+    def load_file(self, filename):
+        self.load_video(filename)
+        self.play_video()
 
     def load_video(self, file_name):
         video_url = QUrl.fromLocalFile(file_name)
@@ -126,7 +130,6 @@ class VideoViewer(QWidget):
             self.mute_button.setIcon(
                 self.style().standardIcon(QStyle.StandardPixmap.SP_MediaVolume)
             )
-
 
     def update_position(self, position):
         self.media_slider.setValue(position)

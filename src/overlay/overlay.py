@@ -18,6 +18,8 @@ from .video_overlay import VideoOverlay
 from .image_overlay import ImageOverlay
 from .pdf_overlay import PDFOverlay
 from .audio_overlay import AudioOverlay
+from .html_overlay import HTMLOverlay
+from .xlsx_overlay import XLSXOverlay
 from PySide6.QtGui import QAction
 
 # from config.config import INPUT_FILE
@@ -72,6 +74,12 @@ class Overlay:
             self.overlay_extra = AudioOverlay(self)
             self.overlay_utils = AudioUtils()
             self.log.info("Using AudioOverlay.")
+        elif self.file_type == "HTML":
+            self.overlay_extra = HTMLOverlay(self)
+            self.log.info("HTML file detected. Using HTMLOverlay.")
+        elif self.file_type == "XLSX":
+            self.overlay_extra = XLSXOverlay(self)
+            self.log.info("XLSX file detected. Using XLSXOverlay.")
         else:
             self.log.error(f"Unsupported file type: {self.file_type}")
             self.overlay = None

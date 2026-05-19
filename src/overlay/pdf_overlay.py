@@ -28,6 +28,7 @@ class PDFOverlay:
         self.log.info("Starting PDF to Text conversion in a separate thread...")
         self.pdf_to_text_running = True
 
+
         def run_conversion():
             try:
                 PDFUtils.pdf_to_txt(self.input_file)

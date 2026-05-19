@@ -33,6 +33,9 @@ class Main:
             if extension == "pdf":
                 file_type = "PDF"
                 self.log.info("PDF file detected.")
+            elif extension == "html":
+                file_type = "HTML"
+                self.log.info("HTML file detected.")
             elif extension in ["jpg", "jpeg", "png"]:
                 file_type = "Image"
                 self.log.info("Image file detected.")
@@ -42,6 +45,9 @@ class Main:
             elif extension in ["mp3", "wav", "flac"]:
                 file_type = "Audio"
                 self.log.info(" Audio file detected.")
+            elif extension in ["xlsx"]:
+                file_type = "XLSX"
+                self.log.info("XLSX file detected.")
             else:
                 self.log.error(f"Unsupported file type: {extension}")
                 return

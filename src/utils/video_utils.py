@@ -2,7 +2,6 @@ import ffmpeg
 import logging
 import subprocess
 from .utils import Utils
-# from superqt import QRangeSlider
 
 from PySide6.QtWidgets import (
     QWidget,
@@ -12,8 +11,6 @@ from PySide6.QtWidgets import (
     QFileDialog,
     QLabel,
 )
-
-from PySide6.QtCore import QUrl, Qt
 
 
 class VideoUtils:

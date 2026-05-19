@@ -13,6 +13,7 @@ dependencies = [
     "pyside6>=6.11.0",
     "pytest>=9.0.3",
     "python-vlc>=3.0.21203",
+    "superqt>=0.8.2",
 ]
 
 [project.scripts]

@@ -3,19 +3,13 @@ import sys
 
 from PySide6.QtWidgets import (
     QWidget,
-    QVBoxLayout,
-    QHBoxLayout,
-    QPushButton,
-    QFileDialog,
-    QStyle,
 )
-from PySide6.QtMultimediaWidgets import QVideoWidget
-from PySide6.QtMultimedia import QMediaPlayer
-from PySide6.QtCore import QUrl
 
 from widget import VideoTrimWidget
 
 from utils import VideoUtils
+
+from viewer import video_viewer
 
 
 class VideoOverlay(QWidget):
@@ -24,6 +18,8 @@ class VideoOverlay(QWidget):
         self.input_file = overlay.input_file
         self.log = logging.getLogger(__name__)
         self.log.info("Initializing VideoOverlay...")
+
+        self.overlay = overlay
 
         self.menu=overlay.menu
 
@@ -39,6 +35,11 @@ class VideoOverlay(QWidget):
         if not self.input_file:
             self.log.warning("No input file loaded.")
             return
+        
+        duration = self.overlay.viewer.media_player.duration()
+        
+        if self.overlay.viewer.media_player.isPlaying():
+            video_viewer.VideoViewer.play_video(self.overlay.viewer)
 
-        self.trim_widget = VideoTrimWidget(self.input_file)
+        self.trim_widget = VideoTrimWidget(self.input_file, duration)
         self.trim_widget.show()

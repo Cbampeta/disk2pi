@@ -120,7 +120,7 @@ class Overlay:
         if len(config.config.prev) > 1:
             config.config.prev.pop()
             output_path = config.config.prev[-1]
-            self.update_input_file(self, output_path)
+            self.update_input_file(self.overlay_extra, output_path)
 
     def extra_overlay_action(self):
         """
@@ -295,10 +295,18 @@ class Overlay:
             func = func_config["function"]
             self.log.info(f"Executing extra function: {func_name} with params={params}")
 
-            result = func(self.input_file, **params)
+            output = func(self.input_file, **params)
 
-            if result:
-                self.update_input_file(self, result)
+            if output:
+                self.update_input_file(self.overlay_extra, output)
+            else:
+                self.log.warning(
+                    f"Function '{func_name}' did not return an output file."
+                )
+
+            print(
+                f"Function on Extra '{func_name}' executed successfully with output: {output}"
+            )
 
         except Exception as e:
             self.log.error(f"Error while executing '{func_name}': {e}")

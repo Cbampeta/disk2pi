@@ -75,6 +75,7 @@ class Overlay:
         self.viewer.load_file(new_input_file)
         disk2pi.config.INPUT_FILE = new_input_file
         
+        
 
     def cancel(self):
         if len(disk2pi.config.prev) > 1:

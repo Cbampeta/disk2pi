@@ -80,7 +80,9 @@ class ImageUtils:
 
         if output_format.lower() == "pdf":
             Utils.open_output_file(output)
+            print("opening file with uv run main.py " + output)
             print(f"Image converted to PDF and saved as {output}")
+            return image_path
 
         return output
 

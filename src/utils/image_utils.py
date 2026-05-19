@@ -5,6 +5,12 @@ import os
 # import cv2
 import numpy as np
 from collections import Counter
+from config.config import OUTPUT_DIR, prev
+from PySide6.QtGui import QPixmap, QTransform
+import PySide6.QtGui
+import PySide6.QtCore
+from PySide6.QtWidgets import QDialog
+import time
 from .utils import Utils  # to change with only the necessary imports
 
 
@@ -196,32 +202,83 @@ class ImageUtils:
             log.error(f"Error negating image: {e}")
             raise
 
-    # points = []
 
-    # def click_event(event, x, y, flags, params):
-    #     if event == cv2.EVENT_LBUTTONDOWN:
-    #         points.append((x, y))
-    #         cv2.circle(img, (x, y), 5, (0, 0, 255), -1)
-    #         cv2.imshow("Image", img)
 
-    #         if len(points) == 2:
-    #             point1 = np.array(points[0])
-    #             point2 = np.array(points[1])
-    #             distance = np.linalg.norm(point1 - point2)
-    #             cv2.line(img, points[0], points[1], (255, 0, 0), 2)
-    #             cv2.imshow("Image", img)
+    @staticmethod
+    def initUI (self):
+        self.setPixmap(QPixmap('input.png'))
+        return
+    
+    @staticmethod
+    def mousePressEvent (self, eventQMouseEvent):
+        self.originQPoint = eventQMouseEvent.pos()
+        self.currentQRubberBand = PySide6.QRubberBand(PySide6.QtGui.QRubberBand.Rectangle, self)
+        self.currentQRubberBand.setGeometry(PySide6.QtCore.QRect(self.originQPoint, PySide6.QtCore.QSize()))
+        self.currentQRubberBand.show()
+    @staticmethod
+    def mouseMoveEvent (self, eventQMouseEvent):
+        self.currentQRubberBand.setGeometry(PySide6.QtCore.QRect(self.originQPoint, eventQMouseEvent.pos()).normalized())
+    @staticmethod
+    def mouseReleaseEvent (self, eventQMouseEvent):
+        self.currentQRubberBand.hide()
+        currentQRect = self.currentQRubberBand.geometry()
+        self.currentQRubberBand.deleteLater()
+        cropQPixmap = self.pixmap().copy(currentQRect)
+        cropQPixmap.save('output.png')
 
-    #             print("Distance: " + str(distance) + " pixels")
-    #             points.clear()
+    @staticmethod
+    def crop(image_path):
+        log = logging.getLogger(__name__)
+        try:
+            # Ouvre l'image dans un QLabel temporaire
+            app = PySide6.QtWidgets.QApplication.instance() or PySide6.QApplication(sys.argv)
+            
+            dialog = CropDialog(image_path)
+            dialog.exec()
+            
+            if dialog.cropped_pixmap:
+                output_path = Utils.output_file_name("crop", "png")
+                dialog.cropped_pixmap.save(output_path)
+                log.info(f"Image cropped successfully")
+                return output_path
+                
+        except Exception as e:
+            log.error(f"Error cropping image: {e}")
+            raise
 
-    # # 1. Charger l'image
-    # img = cv2.imread('ton_image.jpg')
 
-    # # 2. Vérifier si l'image existe et lancer l'affichage
-    # if img is not None:
-    #     cv2.imshow("Image", img) # Ouvre la fenêtre
-    #     cv2.setMouseCallback("Image", click_event) # Active les clics
-    #     cv2.waitKey(0) # Bloque le programme pour qu'il ne se ferme pas tout seul
-    #     cv2.destroyAllWindows() # Nettoie les fenêtres en quittant
-    # else:
-    #     print("Erreur : Impossible de trouver l'image.")
+from PySide6.QtWidgets import QDialog, QLabel, QVBoxLayout, QRubberBand
+from PySide6.QtGui import QPixmap
+from PySide6.QtCore import QPoint, QRect, QSize     
+class CropDialog(QDialog):
+    def __init__(self, image_path):
+        super().__init__()
+        self.cropped_pixmap = None
+        self.originQPoint = QPoint()
+        self.currentQRubberBand = None
+
+        self.label = QLabel(self)
+        self.label.setPixmap(QPixmap(image_path))
+
+        layout = QVBoxLayout(self)
+        layout.addWidget(self.label)
+        self.setFixedSize(self.label.pixmap().size())
+
+    def mousePressEvent(self, event):
+        self.originQPoint = event.position().toPoint()
+        self.currentQRubberBand = QRubberBand(QRubberBand.Shape.Rectangle, self)
+        self.currentQRubberBand.setGeometry(QRect(self.originQPoint, QSize()))
+        self.currentQRubberBand.show()
+
+    def mouseMoveEvent(self, event):
+        self.currentQRubberBand.setGeometry(
+            QRect(self.originQPoint, event.position().toPoint()).normalized()
+        )
+
+    def mouseReleaseEvent(self, event):
+        self.currentQRubberBand.hide()
+        rect = self.currentQRubberBand.geometry()
+        self.currentQRubberBand.deleteLater()
+
+        self.cropped_pixmap = self.label.pixmap().copy(rect)
+        self.accept()

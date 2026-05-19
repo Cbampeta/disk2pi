@@ -11,15 +11,17 @@ dependencies = [
     "pillow>=12.1.1",
     "pydub>=0.25.1",
     "pypdf2>=3.0.1",
-    "pyqt5>=5.15.11",
-    "pyqt6>=6.10.2",
     "pyside6>=6.11.0",
+    "pytest>=9.0.3",
     "python-vlc>=3.0.21203",
 ]
+
+[project.scripts]
+disk2pi = "disk2pi.main:main"
+
+[dependency-groups]
+dev = ["pyinstaller>=6.20.0"]
 
 [build-system]
 requires = ["uv_build>=0.9.24,<0.10.0"]
 build-backend = "uv_build"
-
-[tool.uv]
-required-environments = ["sys_platform == 'win32' and platform_machine == 'AMD64'"]

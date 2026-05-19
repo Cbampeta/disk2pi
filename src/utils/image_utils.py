@@ -1,15 +1,10 @@
 from PIL import Image
-from typing import Literal
 import logging
 import os
-import cv2
-import logging
+
+# import cv2
 import numpy as np
-import sys
 from collections import Counter
-from disk2pi.config import OUTPUT_DIR, prev
-from PySide6.QtGui import QPixmap, QTransform
-import time
 from .utils import Utils  # to change with only the necessary imports
 
 
@@ -17,29 +12,78 @@ class ImageUtils:
     def __init__(self) -> None:
         self.log = logging.getLogger(__name__)
         self.log.info("Initializing ImageUtils...")
-        pass
+        self.utils_functions = {
+            "conversion": {
+                "function": self.conversion,
+                "label": "Conversion",
+                "params": {
+                    "output_format": {
+                        "type": "str",
+                        "label": "Format de sortie",
+                        "default": "pdf",
+                    }
+                },
+            },
+            "compress": {
+                "function": self.compress,
+                "label": "Compression",
+                "params": {
+                    "quality": {
+                        "type": "int",
+                        "label": "Qualité (1-100)",
+                        "default": 75,
+                    }
+                },
+            },
+            "remove_background": {
+                "function": self.remove,
+                "label": "Remove Background",
+                "params": {},
+            },
+            "rotate": {
+                "function": self.rotate,
+                "label": "Rotation",
+                "params": {"angle": {"type": "int", "label": "Angle", "default": 90}},
+            },
+            "decoupage": {
+                "function": self.decoupage,
+                "label": "Découpage",
+                "params": {
+                    "x": {"type": "int", "label": "X", "default": 0},
+                    "y": {"type": "int", "label": "Y", "default": 0},
+                    "width": {"type": "int", "label": "Largeur", "default": 100},
+                    "height": {"type": "int", "label": "Hauteur", "default": 100},
+                },
+            },
+            "negate": {"function": self.negate_image, "label": "Négatif", "params": {}},
+        }
 
     @staticmethod
     def decoupage():
         pass
 
     @staticmethod
-    def conversion(src, output_format="png"):
-        img = Image.open(src)
-        output = Utils.output_file_name("compress", output_format)
+    def conversion(image_path, output_format="png"):
+
+        img = Image.open(image_path)
+        output = Utils.output_file_name("conversion", output_format)
         Utils.creer_fichier(output)
         if output_format.upper() == "JPEG" and img.mode in ("RGBA", "P"):
             img = img.convert("RGB")
         img.save(output, format=output_format)
 
+        if output_format.lower() == "pdf":
+            Utils.open_output_file(output)
+            print(f"Image converted to PDF and saved as {output}")
+
         return output
 
     @staticmethod
-    def compress(src, quality=1, format=None) -> str:
+    def compress(image_path, quality=1, format=None) -> str:
 
-        img = Image.open(src)
+        img = Image.open(image_path)
 
-        save_format = format or os.path.splitext(src)[1][1:].upper()
+        save_format = format or os.path.splitext(image_path)[1][1:].upper()
         if save_format == "JPG":
             save_format = "JPEG"
         save_kwargs = {"optimize": True}
@@ -52,6 +96,13 @@ class ImageUtils:
             output = output.replace(".png", ".jpg")
             save_format = "JPEG"
 
+        if save_format == "JPEG" and img.mode == "RGBA":
+            background = Image.new("RGB", img.size, (255, 255, 255))
+            background.paste(img, mask=img.split()[3])
+            img = background
+        elif save_format == "JPEG" and img.mode != "RGB":
+            img = img.convert("RGB")
+
         if save_format == "JPEG":
             save_kwargs["quality"] = quality
         elif save_format == "WEBP":
@@ -59,7 +110,7 @@ class ImageUtils:
 
         img.save(output, format=save_format, **save_kwargs)
 
-        original_size = os.path.getsize(src)
+        original_size = os.path.getsize(image_path)
         compressed_size = os.path.getsize(output)
         ratio = (1 - compressed_size / original_size) * 100
 
@@ -127,32 +178,50 @@ class ImageUtils:
             log.error(f"Error rotating image: {e}")
             raise
 
-    points = []
+    @staticmethod
+    def negate_image(image_path) -> str:
+        log = logging.getLogger(__name__)
 
-    def click_event(event, x, y, flags, params):
-        if event == cv2.EVENT_LBUTTONDOWN:
-            points.append((x, y))
-            cv2.circle(img, (x, y), 5, (0, 0, 255), -1)
-            cv2.imshow("Image", img)
+        try:
+            img = Image.open(image_path)
+            inverted = Image.eval(img, lambda x: 255 - x)
 
-            if len(points) == 2:
-                point1 = np.array(points[0])
-                point2 = np.array(points[1])
-                distance = np.linalg.norm(point1 - point2)
-                cv2.line(img, points[0], points[1], (255, 0, 0), 2)
-                cv2.imshow("Image", img)
-            
-                print("Distance: " + str(distance) + " pixels")
-                points.clear()
+            output_path = Utils.output_file_name("negate", "png")
+            inverted.save(output_path)
 
-    # 1. Charger l'image
-    img = cv2.imread('ton_image.jpg') 
+            log.info("Image negated successfully")
+            return output_path
 
-    # 2. Vérifier si l'image existe et lancer l'affichage
-    if img is not None:
-        cv2.imshow("Image", img) # Ouvre la fenêtre
-        cv2.setMouseCallback("Image", click_event) # Active les clics
-        cv2.waitKey(0) # Bloque le programme pour qu'il ne se ferme pas tout seul
-        cv2.destroyAllWindows() # Nettoie les fenêtres en quittant
-    else:
-        print("Erreur : Impossible de trouver l'image.")
+        except Exception as e:
+            log.error(f"Error negating image: {e}")
+            raise
+
+    # points = []
+
+    # def click_event(event, x, y, flags, params):
+    #     if event == cv2.EVENT_LBUTTONDOWN:
+    #         points.append((x, y))
+    #         cv2.circle(img, (x, y), 5, (0, 0, 255), -1)
+    #         cv2.imshow("Image", img)
+
+    #         if len(points) == 2:
+    #             point1 = np.array(points[0])
+    #             point2 = np.array(points[1])
+    #             distance = np.linalg.norm(point1 - point2)
+    #             cv2.line(img, points[0], points[1], (255, 0, 0), 2)
+    #             cv2.imshow("Image", img)
+
+    #             print("Distance: " + str(distance) + " pixels")
+    #             points.clear()
+
+    # # 1. Charger l'image
+    # img = cv2.imread('ton_image.jpg')
+
+    # # 2. Vérifier si l'image existe et lancer l'affichage
+    # if img is not None:
+    #     cv2.imshow("Image", img) # Ouvre la fenêtre
+    #     cv2.setMouseCallback("Image", click_event) # Active les clics
+    #     cv2.waitKey(0) # Bloque le programme pour qu'il ne se ferme pas tout seul
+    #     cv2.destroyAllWindows() # Nettoie les fenêtres en quittant
+    # else:
+    #     print("Erreur : Impossible de trouver l'image.")

@@ -1,4 +1,5 @@
 import logging
+import config.config
 
 
 class ImageOverlay:
@@ -16,9 +17,7 @@ class ImageOverlay:
         menu_conversion = self.menu.addMenu("&Conversion")
         menu_conversion.addAction("Convert to pdf", lambda: self.convert(format="pdf"))
         menu_conversion.addAction("Convert to png", lambda: self.convert(format="png"))
-        menu_conversion.addAction(
-            "Convert to jpeg", lambda: self.convert(format="jpeg")
-        )
+        menu_conversion.addAction("Convert to jpeg", lambda: self.convert(format="jpeg"))
         # menu_conversion.addAction(
         #     "Convert Image to Text", lambda: self.()
         # )
@@ -31,6 +30,7 @@ class ImageOverlay:
         )
         menu_transform.addAction("Compress", lambda: self.compress())
 
+
         # menu_transform.addAction(
         #     "Rotate Image", lambda: self.rotate_image()
         # )
@@ -38,8 +38,9 @@ class ImageOverlay:
     def compress(self):
         from utils import ImageUtils
 
-        output_file = ImageUtils.compress(self.input_file)
+        output_file = ImageUtils.compress(config.config.INPUT_FILE)
         self.overlay.update_input_file(self, output_file)
+
 
     def convert(self, format):
         from utils import ImageUtils
@@ -51,7 +52,7 @@ class ImageOverlay:
         from utils import ImageUtils
 
         output_file = ImageUtils.remove(
-            self.input_file,
+            config.config.INPUT_FILE,
         )
 
         self.overlay.update_input_file(self, output_file)
@@ -59,6 +60,6 @@ class ImageOverlay:
     def rotate_image(self, angle=90):
         from utils import ImageUtils
 
-        output_file = ImageUtils.rotate(self.input_file, angle)
+        output_file = ImageUtils.rotate(config.config.INPUT_FILE, angle)
 
         self.overlay.update_input_file(self, output_file)

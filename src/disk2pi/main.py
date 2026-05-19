@@ -1,15 +1,14 @@
 # importing modules for testing
-from PySide6.QtWidgets import (
-    QApplication,
-    QWidget,
-)
+from PySide6.QtWidgets import QApplication
 
 
+from utils import Utils
 from widget import MainWindow
 from overlay import Overlay
 from viewer import Viewer
 import logging as log
-import disk2pi.config
+import config.config
+import sys
 
 
 class Main:
@@ -25,9 +24,11 @@ class Main:
             return
         if len(args) == 1:
             self.log.info("Only one argument provided. Assuming it's the input file.")
-            self.input_file = args[0]
-            disk2pi.config.INPUT_FILE = args[0]
-            disk2pi.config.prev.append(args[0])
+            self.first_input_file = args[0]
+            self.input_file = str(config.config.OUTPUT_DIR / args[0]).split("/")[-1]
+            Utils.save_file(args[0], self.input_file)
+            config.config.INPUT_FILE = self.input_file
+            config.config.prev.append(self.input_file)
             extension = self.input_file.split(".")[-1]
             if extension == "pdf":
                 file_type = "PDF"
@@ -60,8 +61,22 @@ class Main:
         self.main = MainWindow()
         self.viewer = Viewer(self.input_file, file_type, self.app, self.main)
         self.overlay = Overlay(
-            self.input_file, file_type, self.app, self.main, self.viewer
+            self.first_input_file,
+            self.input_file,
+            file_type,
+            self.app,
+            self.main,
+            self.viewer,
         )
 
         self.main.show()
         self.app.exec()
+
+
+def main():
+    log.basicConfig(level=log.INFO)
+    Main(sys.argv[1:])
+
+
+if __name__ == "__main__":
+    main()

@@ -9,6 +9,13 @@ class PDFUtils:
     def __init__(self) -> None:
         self.log = logging.getLogger(__name__)
         self.log.info("Initializing PDFUtils...")
+        self.utils_functions = {
+            "pdf_to_txt": {
+                "function": self.pdf_to_txt,
+                "label": "PDF vers TXT",
+                "params": {},
+            }
+        }
 
     @staticmethod
     def pdf_to_txt(

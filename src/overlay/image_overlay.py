@@ -72,5 +72,5 @@ class ImageOverlay:
 
     def crop(self):
         from utils import ImageUtils
-        output_file = ImageUtils.crop(disk2pi.config.INPUT_FILE)
+        output_file = ImageUtils.crop(config.config.INPUT_FILE)
         self.overlay.update_input_file(self, output_file)

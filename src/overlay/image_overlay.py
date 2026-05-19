@@ -1,5 +1,5 @@
 import logging
-import disk2pi.config
+import config.config
 
 
 class ImageOverlay:
@@ -45,7 +45,7 @@ class ImageOverlay:
     def compress(self):
         from utils import ImageUtils
 
-        output_file = ImageUtils.compress(disk2pi.config.INPUT_FILE)
+        output_file = ImageUtils.compress(config.config.INPUT_FILE)
         self.overlay.update_input_file(self, output_file)
 
 
@@ -58,7 +58,7 @@ class ImageOverlay:
         from utils import ImageUtils
 
         output_file = ImageUtils.remove(
-            disk2pi.config.INPUT_FILE,
+            config.config.INPUT_FILE,
         )
 
         self.overlay.update_input_file(self, output_file)
@@ -66,7 +66,7 @@ class ImageOverlay:
     def rotate_image(self, angle=90):
         from utils import ImageUtils
 
-        output_file = ImageUtils.rotate(disk2pi.config.INPUT_FILE, angle)
+        output_file = ImageUtils.rotate(config.config.INPUT_FILE, angle)
 
         self.overlay.update_input_file(self, output_file)
 

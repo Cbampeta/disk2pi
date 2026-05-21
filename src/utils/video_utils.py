@@ -14,6 +14,7 @@ from PySide6.QtWidgets import (
 )
 
 from PySide6.QtCore import QUrl, Qt
+from config import FFMPEG_PATH
 
 
 class VideoUtils:
@@ -53,7 +54,7 @@ class VideoUtils:
         (
             ffmpeg.output(video, audio, output, vcodec="libx264", acodec="aac")
             .overwrite_output()
-            .run()
+            .run(cmd=FFMPEG_PATH)
         )
 
         return output

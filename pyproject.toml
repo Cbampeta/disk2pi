@@ -5,16 +5,20 @@ description = "Add your description here"
 readme = "README.md"
 requires-python = ">=3.13"
 dependencies = [
+    "bs4>=0.0.2",
     "ffmpeg-python>=0.2.0",
     "numpy>=2.4.4",
     "pandas>=3.0.2",
+    "pdfkit>=1.0.0",
     "pillow>=12.1.1",
+    "playwright>=1.60.0",
     "pydub>=0.25.1",
     "pypdf2>=3.0.1",
     "pyside6>=6.11.0",
     "pytest>=9.0.3",
     "python-vlc>=3.0.21203",
     "superqt>=0.8.2",
+    "weasyprint>=68.1",
 ]
 
 [project.scripts]

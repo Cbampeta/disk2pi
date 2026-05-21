@@ -1,6 +1,8 @@
 from PyPDF2 import PdfReader
 import logging
 from .utils import Utils
+import os
+import pdfkit
 
 
 class PDFUtils:
@@ -34,3 +36,5 @@ class PDFUtils:
             f.write(text)
 
         return output
+
+    

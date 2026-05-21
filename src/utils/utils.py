@@ -31,13 +31,14 @@ class Utils:
 
     @staticmethod
     def output_file_name(action, extension):
-        file_name = OUTPUT_DIR / f"{int(time.time())}_{action}.{extension}"
+        file_name = str(OUTPUT_DIR) + f"/{int(time.time())}_{action}.{extension}"
         prev.append(file_name)
         return file_name
 
     @staticmethod
     def open_output_file(file_path):
-        Utils.open_file(MY_DIR + file_path[2:])
+        Utils.open_file(file_path)
+        print(f"Opening file: {file_path} with uv run main.py")
 
     @staticmethod
     def open_file(file_path):

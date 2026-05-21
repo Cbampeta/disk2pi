@@ -243,7 +243,6 @@ class ImageUtils:
             app = PySide6.QtWidgets.QApplication.instance() or PySide6.QApplication([])
             dialog = CropDialog(image_path)
             dialog.exec()
-
             if dialog.cropped_pixmap:
                 output_path = Utils.output_file_name("crop", "png")
                 dialog.cropped_pixmap.save(str(output_path))

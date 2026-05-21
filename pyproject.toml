@@ -5,7 +5,7 @@ description = "Add your description here"
 readme = "README.md"
 requires-python = ">=3.13"
 dependencies = [
-    "ffmpeg>=1.4",
+    "ffmpeg-python>=0.2.0",
     "numpy>=2.4.4",
     "pandas>=3.0.2",
     "pillow>=12.1.1",
@@ -14,6 +14,7 @@ dependencies = [
     "pyside6>=6.11.0",
     "pytest>=9.0.3",
     "python-vlc>=3.0.21203",
+    "superqt>=0.8.2",
 ]
 
 [project.scripts]

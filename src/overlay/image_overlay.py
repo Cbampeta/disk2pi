@@ -12,6 +12,7 @@ class ImageOverlay:
 
         self.init_conversion_panel()
         self.init_transform_panel()
+        self.init_crop_panel()
 
     def init_conversion_panel(self):
         menu_conversion = self.menu.addMenu("&Conversion")
@@ -35,6 +36,12 @@ class ImageOverlay:
         #     "Rotate Image", lambda: self.rotate_image()
         # )
 
+    def init_crop_panel(self):
+        menu_crop = self.menu.addMenu("&Crop")
+        menu_crop.addAction("Crop", lambda: self.crop())
+        
+
+
     def compress(self):
         from utils import ImageUtils
 
@@ -44,7 +51,6 @@ class ImageOverlay:
 
     def convert(self, format):
         from utils import ImageUtils
-
         output_file = ImageUtils.conversion(self.input_file, output_format=format)
         self.overlay.update_input_file(self, output_file)
 
@@ -62,4 +68,9 @@ class ImageOverlay:
 
         output_file = ImageUtils.rotate(config.config.INPUT_FILE, angle)
 
+        self.overlay.update_input_file(self, output_file)
+
+    def crop(self):
+        from utils import ImageUtils
+        output_file = ImageUtils.crop(config.config.INPUT_FILE)
         self.overlay.update_input_file(self, output_file)

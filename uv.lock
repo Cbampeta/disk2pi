@@ -27,6 +27,7 @@ source = { editable = "." }
 dependencies = [
     { name = "ffmpeg-python" },
     { name = "numpy" },
+    { name = "pandas" },
     { name = "pillow" },
     { name = "pydub" },
     { name = "pypdf2" },
@@ -45,6 +46,7 @@ dev = [
 requires-dist = [
     { name = "ffmpeg-python", specifier = ">=0.2.0" },
     { name = "numpy", specifier = ">=2.4.4" },
+    { name = "pandas", specifier = ">=3.0.2" },
     { name = "pillow", specifier = ">=12.1.1" },
     { name = "pydub", specifier = ">=0.25.1" },
     { name = "pypdf2", specifier = ">=3.0.1" },

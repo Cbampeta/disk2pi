@@ -18,6 +18,8 @@ from .video_overlay import VideoOverlay
 from .image_overlay import ImageOverlay
 from .pdf_overlay import PDFOverlay
 from .audio_overlay import AudioOverlay
+from .html_overlay import HTMLOverlay
+from .xlsx_overlay import XLSXOverlay
 from PySide6.QtGui import QAction
 
 # from config.config import INPUT_FILE
@@ -72,6 +74,12 @@ class Overlay:
             self.overlay_extra = AudioOverlay(self)
             self.overlay_utils = AudioUtils()
             self.log.info("Using AudioOverlay.")
+        elif self.file_type == "HTML":
+            self.overlay_extra = HTMLOverlay(self)
+            self.log.info("HTML file detected. Using HTMLOverlay.")
+        elif self.file_type == "XLSX":
+            self.overlay_extra = XLSXOverlay(self)
+            self.log.info("XLSX file detected. Using XLSXOverlay.")
         else:
             self.log.error(f"Unsupported file type: {self.file_type}")
             self.overlay = None
@@ -120,7 +128,7 @@ class Overlay:
         if len(config.config.prev) > 1:
             config.config.prev.pop()
             output_path = config.config.prev[-1]
-            self.update_input_file(self, output_path)
+            self.update_input_file(self.overlay_extra, output_path)
 
     def extra_overlay_action(self):
         """
@@ -295,10 +303,18 @@ class Overlay:
             func = func_config["function"]
             self.log.info(f"Executing extra function: {func_name} with params={params}")
 
-            result = func(self.input_file, **params)
+            output = func(self.input_file, **params)
 
-            if result:
-                self.update_input_file(self, result)
+            if output:
+                self.update_input_file(self.overlay_extra, output)
+            else:
+                self.log.warning(
+                    f"Function '{func_name}' did not return an output file."
+                )
+
+            print(
+                f"Function on Extra '{func_name}' executed successfully with output: {output}"
+            )
 
         except Exception as e:
             self.log.error(f"Error while executing '{func_name}': {e}")

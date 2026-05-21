@@ -25,7 +25,8 @@ class Main:
         if len(args) == 1:
             self.log.info("Only one argument provided. Assuming it's the input file.")
             self.first_input_file = args[0]
-            self.input_file = str(config.config.OUTPUT_DIR / args[0]).split("/")[-1]
+            self.input_file = str(config.config.OUTPUT_DIR) + args[0].split("/")[-1]
+            print(f"Input file: {self.input_file}")
             Utils.save_file(args[0], self.input_file)
             config.config.INPUT_FILE = self.input_file
             config.config.prev.append(self.input_file)
@@ -33,6 +34,9 @@ class Main:
             if extension == "pdf":
                 file_type = "PDF"
                 self.log.info("PDF file detected.")
+            elif extension == "html":
+                file_type = "HTML"
+                self.log.info("HTML file detected.")
             elif extension in ["jpg", "jpeg", "png"]:
                 file_type = "Image"
                 self.log.info("Image file detected.")
@@ -42,6 +46,9 @@ class Main:
             elif extension in ["mp3", "wav", "flac"]:
                 file_type = "Audio"
                 self.log.info(" Audio file detected.")
+            elif extension in ["xlsx"]:
+                file_type = "XLSX"
+                self.log.info("XLSX file detected.")
             else:
                 self.log.error(f"Unsupported file type: {extension}")
                 return

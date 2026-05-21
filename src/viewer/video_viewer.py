@@ -11,7 +11,6 @@ from PySide6.QtMultimediaWidgets import QVideoWidget
 from PySide6.QtMultimedia import QMediaPlayer, QAudioOutput
 from PySide6.QtCore import QUrl, Qt
 from PySide6.QtWidgets import QSlider, QSizePolicy, QToolButton
-from PySide6.QtGui import QIcon
 
 
 class VideoViewer(QWidget):
@@ -30,14 +29,14 @@ class VideoViewer(QWidget):
         self.audio_output.setVolume(0.5)
 
         self.volume_slider = QSlider(Qt.Orientation.Vertical)
-        self.volume_slider.setRange(0, 100)   
+        self.volume_slider.setRange(0, 100)
         self.volume_slider.setValue(50)
 
         self.mute_button = QToolButton()
         self.mute_button.setCheckable(True)
         self.mute_button.setIcon(
             self.style().standardIcon(QStyle.StandardPixmap.SP_MediaVolume)
-            )
+        )
         self.mute_button.setToolTip("Mute / Unmute")
 
         self.media_slider = QSlider(Qt.Orientation.Horizontal)
@@ -78,6 +77,10 @@ class VideoViewer(QWidget):
         if self.input_file:
             self.load_video(input_file)
             self.play_video()
+
+    def load_file(self, filename):
+        self.load_video(filename)
+        self.play_video()
 
     def load_video(self, file_name):
         video_url = QUrl.fromLocalFile(file_name)
@@ -128,7 +131,6 @@ class VideoViewer(QWidget):
                 self.style().standardIcon(QStyle.StandardPixmap.SP_MediaVolume)
             )
 
-
     def update_position(self, position):
         self.media_slider.setValue(position)
         if not self.user_is_seeking:
@@ -150,22 +152,22 @@ class VideoViewer(QWidget):
     def setup_ui(self):
         layout = QVBoxLayout()
 
-        video_layout = QHBoxLayout()
-        video_layout.addWidget(self.video_widget)
-        video_layout.addWidget(self.volume_slider)
+        self.video_layout = QHBoxLayout()
+        self.video_layout.addWidget(self.video_widget)
+        self.video_layout.addWidget(self.volume_slider)
 
-        controls_layout = QHBoxLayout()
+        self.controls_layout = QHBoxLayout()
         self.open_button.setFixedHeight(30)
-        controls_layout.addWidget(self.open_button)
+        self.controls_layout.addWidget(self.open_button)
         self.play_button.setFixedHeight(30)
-        controls_layout.addWidget(self.play_button)
+        self.controls_layout.addWidget(self.play_button)
         self.stop_button.setFixedHeight(30)
-        controls_layout.addWidget(self.stop_button)
+        self.controls_layout.addWidget(self.stop_button)
         self.media_slider.setFixedHeight(30)
-        controls_layout.addWidget(self.media_slider)
-        controls_layout.addWidget(self.mute_button)
+        self.controls_layout.addWidget(self.media_slider)
+        self.controls_layout.addWidget(self.mute_button)
 
-        layout.addLayout(video_layout)
-        layout.addLayout(controls_layout)
+        layout.addLayout(self.video_layout)
+        layout.addLayout(self.controls_layout)
 
         self.setLayout(layout)

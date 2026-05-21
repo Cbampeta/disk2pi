@@ -11,7 +11,9 @@ import PySide6.QtGui
 import PySide6.QtCore
 from PySide6.QtWidgets import QDialog
 import time
-from .utils import Utils  # to change with only the necessary imports
+from PySide6.QtCore import Qt
+from PySide6.QtWidgets import QApplication
+from .utils import Utils
 
 
 class ImageUtils:
@@ -238,11 +240,7 @@ class ImageUtils:
     def crop(image_path):
         log = logging.getLogger(__name__)
         try:
-            # Ouvre l'image dans un QLabel temporaire
-            app = PySide6.QtWidgets.QApplication.instance() or PySide6.QApplication(
-                sys.argv
-            )
-
+            app = PySide6.QtWidgets.QApplication.instance() or PySide6.QApplication([])
             dialog = CropDialog(image_path)
             dialog.exec()
 
@@ -268,13 +266,20 @@ class CropDialog(QDialog):
         self.cropped_pixmap = None
         self.originQPoint = QPoint()
         self.currentQRubberBand = None
-
+        self._original_pixmap = QPixmap(image_path)
+        screen = QApplication.primaryScreen().availableGeometry()
+        max_size = screen.size() * 0.8
+        scaled_pixmap = self._original_pixmap.scaled(
+            max_size,
+            Qt.AspectRatioMode.KeepAspectRatio,
+            Qt.TransformationMode.SmoothTransformation
+        )
         self.label = QLabel(self)
-        self.label.setPixmap(QPixmap(image_path))
-
+        self.label.setPixmap(scaled_pixmap)
         layout = QVBoxLayout(self)
         layout.addWidget(self.label)
-        self.setFixedSize(self.label.pixmap().size())
+        self.setFixedSize(scaled_pixmap.size())
+            
 
     def mousePressEvent(self, event):
         self.originQPoint = event.position().toPoint()

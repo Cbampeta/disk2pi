@@ -104,9 +104,10 @@ class Overlay:
         )
 
 
-        self.actBrowse = QAction("Browse",self.mainWindow)
-        self.actBrowse.setStatusTip("Browse")
+        self.actBrowse = QAction("Open",self.mainWindow)
+        self.actBrowse.setStatusTip("Open")
         self.actBrowse.triggered.connect(self.browse)
+        self.actBrowse.setShortcut("Ctrl+o")
         self.file.addAction(self.actSave)
         self.file.addAction(self.actCancel)
         self.file.addAction(self.actExit)

@@ -43,7 +43,10 @@ class Utils:
     @staticmethod
     def open_file(file_path):
         subprocess.Popen(["uv", "run", "main.py", file_path])
+        import config.config
+        config.config.CURRENT_MAINWINDOW.close()
         logging.info(f"Opening file: {file_path} with uv run main.py")
+        
 
     @staticmethod
     def save_file(file_path, where_to_save):

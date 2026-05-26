@@ -30,6 +30,7 @@ PROJECT_ROOT = Path(__file__).resolve().parents[2]
 PDF_PATH = OUTPUT_DIR / "ticket.pdf"
 LOG_DIR = PROJECT_ROOT / "logs"
 
+CURRENT_MAINWINDOW = None
 
 MY_DIR = str.split(os.path.dirname(os.path.abspath(__file__)), "/")[:-2]
 MY_DIR = "/".join(MY_DIR) + "/"

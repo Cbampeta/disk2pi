@@ -8,7 +8,7 @@ from PySide6.QtWidgets import (
     QFormLayout,
     QMessageBox,
 )
-from PySide6.QtWidgets import QComboBox, QSpinBox, QDoubleSpinBox, QCheckBox
+from PySide6.QtWidgets import QComboBox, QSpinBox, QDoubleSpinBox, QCheckBox,QFileDialog
 from utils.pdf_utils import PDFUtils
 from utils.video_utils import VideoUtils
 from utils.image_utils import ImageUtils
@@ -103,16 +103,38 @@ class Overlay:
             lambda: Utils.save_file(self.input_file, self.first_input_file)
         )
 
-        # adding an extra action to the file menu for other functions that are not in the basic overlay
 
+        self.actBrowse = QAction("Open",self.mainWindow)
+        self.actBrowse.setStatusTip("Open")
+        self.actBrowse.triggered.connect(self.browse)
+        self.actBrowse.setShortcut("Ctrl+o")
         self.file.addAction(self.actSave)
         self.file.addAction(self.actCancel)
         self.file.addAction(self.actExit)
+        self.file.addAction(self.actBrowse)
 
+        # adding an extra action to the file menu for other functions that are not in the basic overlay
         self.extra = self.menu.addAction("Extra")
         self.extra.triggered.connect(self.extra_overlay_action)
         self.extra.setShortcut("Ctrl+e")
         self.extra.setStatusTip("Extra")
+    
+
+    def browse(self):
+        #file_path, _ = QFileDialog.getOpenFileName(None,"Select a new file","","*.pdf *.jpg *.jpeg *.png *.html *.xlsx *.mp4 *.avi *.mkv *.mp3 *.wav *.flac" )
+        
+        dialog = QFileDialog(None)
+        dialog.setOption(QFileDialog.Option.DontUseNativeDialog, True)
+        dialog.setNameFilter("*.pdf *.jpg *.jpeg *.png *.html *.xlsx *.mp4 *.avi *.mkv *.mp3 *.wav *.flac")
+        dialog.setFileMode(QFileDialog.FileMode.ExistingFile)
+        if dialog.exec():
+            file_path = dialog.selectedFiles()[0]
+        if file_path:
+            Utils.open_file(file_path)
+
+        
+
+
 
     def update_input_file(self, caller, new_input_file):
         self.log.info(f"Updating input file from {self.input_file} to {new_input_file}")

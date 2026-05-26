@@ -66,6 +66,8 @@ PDF_PATH = OUTPUT_DIR / "ticket.pdf"
 LOG_DIR = PROJECT_ROOT / "logs"
 FFMPEG_PATH = get_ffmpeg_path()
 
+CURRENT_MAINWINDOW = None
+
 MY_DIR = str.split(os.path.dirname(os.path.abspath(__file__)), "/")[:-2]
 MY_DIR = "/".join(MY_DIR) + "/"
 

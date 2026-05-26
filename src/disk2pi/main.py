@@ -81,7 +81,7 @@ class Main:
             self.main,
             self.viewer,
         )
-
+        config.config.CURRENT_MAINWINDOW=self.main
         self.main.show()
         self.app.exec()
 

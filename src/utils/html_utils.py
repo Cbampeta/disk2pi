@@ -1,11 +1,12 @@
-from .utils import Utils
-from weasyprint import HTML
-from playwright.sync_api import sync_playwright
-import pdfkit
-from PyPDF2 import PdfReader
+from pathlib import Path
 import logging
+
 from bs4 import BeautifulSoup
 
+from PySide6.QtGui import QTextDocument
+from PySide6.QtPrintSupport import QPrinter
+
+from .utils import Utils
 
 class HTMLUtils:
     def __init__(self) -> None:
@@ -17,7 +18,17 @@ class HTMLUtils:
         output = Utils.output_file_name("html_to_pdf", "pdf")
         Utils.creer_fichier(output)
 
-        HTML(filename=source).write_pdf(output)
+        with open(source, "r", encoding="utf-8") as f:
+            html_content = f.read()
+
+        document = QTextDocument()
+        document.setHtml(html_content)
+
+        printer = QPrinter(QPrinter.PrinterMode.HighResolution)
+        printer.setOutputFormat(QPrinter.OutputFormat.PdfFormat)
+        printer.setOutputFileName(str(output))
+
+        document.print(printer)
 
         return output
 

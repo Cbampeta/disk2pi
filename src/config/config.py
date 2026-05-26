@@ -10,7 +10,7 @@ def get_ffmpeg_path() -> str:
     system = platform.system().lower()
 
     if system == "windows":
-        bundled = resource_path("ffmpeg/ffmpeg.exe")
+        bundled = resource_path("ffmpeg\\ffmpeg.exe")
     elif system == "linux":
         bundled = resource_path("ffmpeg/ffmpeg")
     else:
@@ -26,6 +26,9 @@ def get_ffmpeg_path() -> str:
         return fallback
 
     raise RuntimeError("FFmpeg introuvable.")
+
+
+SYSTEM = platform.system().lower()
 
 
 def resource_path(relative_path: str) -> Path:

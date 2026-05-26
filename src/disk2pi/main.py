@@ -9,6 +9,7 @@ from viewer import Viewer
 import logging as log
 import config.config
 import sys
+from config.config import SYSTEM
 
 
 class Main:
@@ -25,7 +26,18 @@ class Main:
         if len(args) == 1:
             self.log.info("Only one argument provided. Assuming it's the input file.")
             self.first_input_file = args[0]
-            self.input_file = str(config.config.OUTPUT_DIR) + args[0].split("/")[-1]
+            if SYSTEM == "linux":
+                self.input_file = str(config.config.OUTPUT_DIR) + args[0].split("/")[-1]
+            elif SYSTEM == "windows":
+                self.input_file = (
+                    str(config.config.OUTPUT_DIR) + args[0].split("\\")[-1]
+                )
+            else:
+                self.input_file = str(config.config.OUTPUT_DIR) + args[0].split("/")[-1]
+                self.log.warning(
+                    f"Unknown system: {SYSTEM}. Defaulting to Linux path handling."
+                )
+
             print(f"Input file: {self.input_file}")
             Utils.save_file(args[0], self.input_file)
             config.config.INPUT_FILE = self.input_file

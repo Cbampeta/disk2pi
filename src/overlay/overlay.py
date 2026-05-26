@@ -8,7 +8,13 @@ from PySide6.QtWidgets import (
     QFormLayout,
     QMessageBox,
 )
-from PySide6.QtWidgets import QComboBox, QSpinBox, QDoubleSpinBox, QCheckBox,QFileDialog
+from PySide6.QtWidgets import (
+    QComboBox,
+    QSpinBox,
+    QDoubleSpinBox,
+    QCheckBox,
+    QFileDialog,
+)
 from utils.pdf_utils import PDFUtils
 from utils.video_utils import VideoUtils
 from utils.image_utils import ImageUtils
@@ -81,7 +87,9 @@ class Overlay:
             self.overlay_extra = XLSXOverlay(self)
             self.log.info("XLSX file detected. Using XLSXOverlay.")
         else:
-            self.log.error(f"Unsupported file type: {self.file_type}")
+            self.log.info(
+                f"File none or unsupported type detected. No specific overlay will be used."
+            )
             self.overlay = None
 
     def basic_overlay(self) -> None:
@@ -103,8 +111,7 @@ class Overlay:
             lambda: Utils.save_file(self.input_file, self.first_input_file)
         )
 
-
-        self.actBrowse = QAction("Open",self.mainWindow)
+        self.actBrowse = QAction("Open", self.mainWindow)
         self.actBrowse.setStatusTip("Open")
         self.actBrowse.triggered.connect(self.browse)
         self.actBrowse.setShortcut("Ctrl+o")
@@ -118,23 +125,21 @@ class Overlay:
         self.extra.triggered.connect(self.extra_overlay_action)
         self.extra.setShortcut("Ctrl+e")
         self.extra.setStatusTip("Extra")
-    
 
     def browse(self):
-        #file_path, _ = QFileDialog.getOpenFileName(None,"Select a new file","","*.pdf *.jpg *.jpeg *.png *.html *.xlsx *.mp4 *.avi *.mkv *.mp3 *.wav *.flac" )
-        
+        # file_path, _ = QFileDialog.getOpenFileName(None,"Select a new file","","*.pdf *.jpg *.jpeg *.png *.html *.xlsx *.mp4 *.avi *.mkv *.mp3 *.wav *.flac" )
+
         dialog = QFileDialog(None)
         dialog.setOption(QFileDialog.Option.DontUseNativeDialog, True)
-        dialog.setNameFilter("*.pdf *.jpg *.jpeg *.png *.html *.xlsx *.mp4 *.avi *.mkv *.mp3 *.wav *.flac")
+        dialog.setNameFilter(
+            "*.pdf *.jpg *.jpeg *.png *.html *.xlsx *.mp4 *.avi *.mkv *.mp3 *.wav *.flac"
+        )
         dialog.setFileMode(QFileDialog.FileMode.ExistingFile)
+        file_path = None
         if dialog.exec():
             file_path = dialog.selectedFiles()[0]
         if file_path:
             Utils.open_file(file_path)
-
-        
-
-
 
     def update_input_file(self, caller, new_input_file):
         self.log.info(f"Updating input file from {self.input_file} to {new_input_file}")

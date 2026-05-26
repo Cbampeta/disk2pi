@@ -2,6 +2,41 @@ import os
 from pathlib import Path
 import sys
 
+import platform
+import shutil
+
+
+def get_ffmpeg_path() -> str:
+    system = platform.system().lower()
+
+    if system == "windows":
+        bundled = resource_path("ffmpeg\\ffmpeg.exe")
+    elif system == "linux":
+        bundled = resource_path("ffmpeg/ffmpeg")
+    else:
+        raise RuntimeError(f"Système non supporté : {platform.system()}")
+
+    if bundled.exists():
+        if system == "linux":
+            bundled.chmod(bundled.stat().st_mode | 0o111)
+        return str(bundled)
+
+    fallback = shutil.which("ffmpeg")
+    if fallback:
+        return fallback
+
+    raise RuntimeError("FFmpeg introuvable.")
+
+
+SYSTEM = platform.system().lower()
+
+
+def resource_path(relative_path: str) -> Path:
+    if getattr(sys, "frozen", False):
+        return Path(sys._MEIPASS) / relative_path
+
+    return Path(__file__).resolve().parents[2] / relative_path
+
 
 APP_NAME = "disk2pi"
 
@@ -29,6 +64,7 @@ OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
 PDF_PATH = OUTPUT_DIR / "ticket.pdf"
 LOG_DIR = PROJECT_ROOT / "logs"
+FFMPEG_PATH = get_ffmpeg_path()
 
 CURRENT_MAINWINDOW = None
 

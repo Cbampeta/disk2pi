@@ -11,7 +11,9 @@ import PySide6.QtGui
 import PySide6.QtCore
 from PySide6.QtWidgets import QDialog
 import time
-from .utils import Utils  # to change with only the necessary imports
+from PySide6.QtCore import Qt
+from PySide6.QtWidgets import QApplication
+from .utils import Utils
 
 
 class ImageUtils:
@@ -198,52 +200,55 @@ class ImageUtils:
             inverted.save(output_path)
 
             log.info("Image negated successfully")
-            return output_path
+            return str(output_path)
 
         except Exception as e:
             log.error(f"Error negating image: {e}")
             raise
 
-
-
     @staticmethod
-    def initUI (self):
-        self.setPixmap(QPixmap('input.png'))
+    def initUI(self):
+        self.setPixmap(QPixmap("input.png"))
         return
-    
+
     @staticmethod
-    def mousePressEvent (self, eventQMouseEvent):
+    def mousePressEvent(self, eventQMouseEvent):
         self.originQPoint = eventQMouseEvent.pos()
-        self.currentQRubberBand = PySide6.QRubberBand(PySide6.QtGui.QRubberBand.Rectangle, self)
-        self.currentQRubberBand.setGeometry(PySide6.QtCore.QRect(self.originQPoint, PySide6.QtCore.QSize()))
+        self.currentQRubberBand = PySide6.QRubberBand(
+            PySide6.QtGui.QRubberBand.Rectangle, self
+        )
+        self.currentQRubberBand.setGeometry(
+            PySide6.QtCore.QRect(self.originQPoint, PySide6.QtCore.QSize())
+        )
         self.currentQRubberBand.show()
+
     @staticmethod
-    def mouseMoveEvent (self, eventQMouseEvent):
-        self.currentQRubberBand.setGeometry(PySide6.QtCore.QRect(self.originQPoint, eventQMouseEvent.pos()).normalized())
+    def mouseMoveEvent(self, eventQMouseEvent):
+        self.currentQRubberBand.setGeometry(
+            PySide6.QtCore.QRect(self.originQPoint, eventQMouseEvent.pos()).normalized()
+        )
+
     @staticmethod
-    def mouseReleaseEvent (self, eventQMouseEvent):
+    def mouseReleaseEvent(self, eventQMouseEvent):
         self.currentQRubberBand.hide()
         currentQRect = self.currentQRubberBand.geometry()
         self.currentQRubberBand.deleteLater()
         cropQPixmap = self.pixmap().copy(currentQRect)
-        cropQPixmap.save('output.png')
+        cropQPixmap.save("output.png")
 
     @staticmethod
     def crop(image_path):
         log = logging.getLogger(__name__)
         try:
-            # Ouvre l'image dans un QLabel temporaire
-            app = PySide6.QtWidgets.QApplication.instance() or PySide6.QApplication(sys.argv)
-            
+            app = PySide6.QtWidgets.QApplication.instance() or PySide6.QApplication([])
             dialog = CropDialog(image_path)
             dialog.exec()
-            
             if dialog.cropped_pixmap:
                 output_path = Utils.output_file_name("crop", "png")
-                dialog.cropped_pixmap.save(output_path)
+                dialog.cropped_pixmap.save(str(output_path))
                 log.info(f"Image cropped successfully")
                 return output_path
-                
+
         except Exception as e:
             log.error(f"Error cropping image: {e}")
             raise
@@ -251,20 +256,29 @@ class ImageUtils:
 
 from PySide6.QtWidgets import QDialog, QLabel, QVBoxLayout, QRubberBand
 from PySide6.QtGui import QPixmap
-from PySide6.QtCore import QPoint, QRect, QSize     
+from PySide6.QtCore import QPoint, QRect, QSize
+
+
 class CropDialog(QDialog):
     def __init__(self, image_path):
         super().__init__()
         self.cropped_pixmap = None
         self.originQPoint = QPoint()
         self.currentQRubberBand = None
-
+        self._original_pixmap = QPixmap(image_path)
+        screen = QApplication.primaryScreen().availableGeometry()
+        max_size = screen.size() * 0.8
+        scaled_pixmap = self._original_pixmap.scaled(
+            max_size,
+            Qt.AspectRatioMode.KeepAspectRatio,
+            Qt.TransformationMode.SmoothTransformation
+        )
         self.label = QLabel(self)
-        self.label.setPixmap(QPixmap(image_path))
-
+        self.label.setPixmap(scaled_pixmap)
         layout = QVBoxLayout(self)
         layout.addWidget(self.label)
-        self.setFixedSize(self.label.pixmap().size())
+        self.setFixedSize(scaled_pixmap.size())
+            
 
     def mousePressEvent(self, event):
         self.originQPoint = event.position().toPoint()

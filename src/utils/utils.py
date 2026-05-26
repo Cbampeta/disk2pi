@@ -46,12 +46,31 @@ class Utils:
         print(f"Opening file: {file_path} with uv run main.py")
 
     @staticmethod
+    def restart_app_with_file(file_path: str):
+        file_path = str(Path(file_path).resolve())
+
+        if getattr(sys, "frozen", False):
+            # Mode PyInstaller :
+            # sys.executable = chemin vers Disk2Pi.exe ou ./Disk2Pi
+            command = [sys.executable, file_path]
+        else:
+            # Mode développement :
+            # on relance le script Python courant
+            command = [sys.executable, "-m", "disk2pi.main", file_path]
+
+        logging.info(f"Restarting app with command: {command}")
+        subprocess.Popen(command)
+
+    @staticmethod
     def open_file(file_path):
-        subprocess.Popen(["uv", "run", "main.py", file_path])
+        Utils.restart_app_with_file(file_path)
+
         import config.config
-        config.config.CURRENT_MAINWINDOW.close()
-        logging.info(f"Opening file: {file_path} with uv run main.py")
-        
+
+        if config.config.CURRENT_MAINWINDOW is not None:
+            config.config.CURRENT_MAINWINDOW.close()
+
+        logging.info(f"Opening file: {file_path}")
 
     @staticmethod
     def save_file(file_path, where_to_save):

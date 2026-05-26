@@ -4,6 +4,7 @@ import sys
 
 import platform
 import shutil
+import logging
 
 
 def get_ffmpeg_path() -> str:
@@ -15,16 +16,16 @@ def get_ffmpeg_path() -> str:
         bundled = resource_path("vendor/linux/ffmpeg")
     else:
         raise RuntimeError(f"Système non supporté : {platform.system()}")
-    print(f"Recherche de FFmpeg dans : {bundled}")
+    logging.info(f"Recherche de FFmpeg dans : {bundled}")
     if bundled.exists():
         if system == "linux":
             bundled.chmod(bundled.stat().st_mode | 0o111)
-        print(f"FFmpeg trouvé dans le bundle : {bundled}")
+        logging.info(f"FFmpeg trouvé dans le bundle : {bundled}")
         return str(bundled)
 
     fallback = shutil.which("ffmpeg")
     if fallback:
-        print(f"FFmpeg trouvé dans le système : {fallback}")
+        logging.info(f"FFmpeg trouvé dans le système : {fallback}")
         return fallback
 
     raise RuntimeError("FFmpeg introuvable.")

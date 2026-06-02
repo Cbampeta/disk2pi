@@ -41,7 +41,7 @@ disk2pi is a tool that processes various types of documents.
     ```
     or (windows)
     ```bash
-    uv run pyinstaller   --name Disk2Pi   --onedir   --windowed   --paths src   --add-binary "vendor/windows/ffmpeg:ffmpeg"   src/disk2pi/main.py
+    uv run pyinstaller   --name Disk2Pi   --onedir   --windowed   --paths src   --add-binary "vendor\windows\ffmpeg.exe;ffmpeg"   src/disk2pi/main.py
     ```
 
 

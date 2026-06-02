@@ -88,23 +88,38 @@ class Utils:
     def get_ffmpeg_path() -> str:
         system = platform.system().lower()
 
-        if system == "windows":
-            bundled = Utils.resource_path("ffmpeg/ffmpeg.exe")
-        elif system == "linux":
-            bundled = Utils.resource_path("ffmpeg/ffmpeg")
+        if getattr(sys, "frozen", False):
+            # when bundled, ffmpeg is included in the resources
+            if system == "windows":
+                bundled = Utils.resource_path("ffmpeg/ffmpeg.exe")
+            elif system == "linux":
+                bundled = Utils.resource_path("ffmpeg/ffmpeg")
+            else:
+                raise RuntimeError(f"Système non supporté : {platform.system()}")
         else:
-            raise RuntimeError(f"Système non supporté : {platform.system()}")
+            # when developing, look for ffmpeg in the vendor directory
+            if system == "windows":
+                bundled = Utils.resource_path("vendor/windows/ffmpeg.exe")
+            elif system == "linux":
+                bundled = Utils.resource_path("vendor/linux/ffmpeg")
+            else:
+                raise RuntimeError(f"Système non supporté : {platform.system()}")
+
+        logging.info(f"Recherche de FFmpeg dans : {bundled}")
 
         if bundled.exists():
             if system == "linux":
                 bundled.chmod(bundled.stat().st_mode | 0o111)
+
+            logging.info(f"FFmpeg trouvé : {bundled}")
             return str(bundled)
 
         fallback = shutil.which("ffmpeg")
         if fallback:
+            logging.info(f"FFmpeg trouvé dans le système : {fallback}")
             return fallback
 
-        raise RuntimeError("FFmpeg introuvable.")
+        raise RuntimeError(f"FFmpeg introuvable. Chemin testé : {bundled}")
 
     @staticmethod
     def resource_path(relative_path: str) -> Path:

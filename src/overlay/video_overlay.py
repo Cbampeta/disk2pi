@@ -7,8 +7,6 @@ from PySide6.QtWidgets import (
 
 from widget import VideoTrimWidget
 
-from utils import VideoUtils
-
 from viewer import video_viewer
 
 

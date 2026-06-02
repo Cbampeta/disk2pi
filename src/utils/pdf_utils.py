@@ -1,8 +1,6 @@
 from PyPDF2 import PdfReader
 import logging
 from .utils import Utils
-import os
-import pdfkit
 
 
 class PDFUtils:
@@ -20,9 +18,9 @@ class PDFUtils:
     @staticmethod
     def pdf_to_txt(
         src,
-    ) -> str:  # seulement les pdf avec du vrai texte
+    ) -> str:
         output = Utils.output_file_name("pdf_to_txt", "txt")
-        Utils.creer_fichier(output)  # crée le fichier de sortie
+        Utils.creer_fichier(output)
 
         reader = PdfReader(src)
         text = ""
@@ -32,7 +30,7 @@ class PDFUtils:
 
         with open(
             output, "w", encoding="utf-8"
-        ) as f:  # ouvre le fichier txt en mode écriture
+        ) as f:
             f.write(text)
 
         return output

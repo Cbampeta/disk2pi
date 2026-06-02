@@ -1,6 +1,9 @@
 import logging
-import pandas as pd  # bibliothèque pour lire les fichiers excel
-from weasyprint import HTML  # bibliothèque pour convertir html en pdf
+import pandas as pd
+
+from PySide6.QtGui import QTextDocument
+from PySide6.QtPrintSupport import QPrinter
+
 from .utils import Utils
 
 
@@ -11,34 +14,59 @@ class XLSXUtils:
 
     @staticmethod
     def xlsx_to_pdf(source):
+        output = Utils.output_file_name("xlsx_to_pdf", "pdf")
+        Utils.creer_fichier(output)
 
-        output = Utils.output_file_name(
-            "xlsx_to_pdf", "pdf"
-        )  # crée le nom du fichier de sortie ex: fichier.pdf
-        Utils.creer_fichier(output)  # crée le fichier vide sur le disque
+        df = pd.read_excel(source)
 
-        df = pd.read_excel(
-            source
-        )  # lit le fichier xlsx et le stocke dans un tableau (dataframe)
+        html_table = df.to_html(index=False)
 
-        html = df.to_html(index=False)  # convertit le tableau en html
-        # index=False = ne pas afficher les numéros de lignes (0, 1, 2...)
+        html = f"""
+        <html>
+        <head>
+            <meta charset="utf-8">
+            <style>
+                body {{
+                    font-family: Arial, sans-serif;
+                    font-size: 10pt;
+                }}
+                table {{
+                    border-collapse: collapse;
+                    width: 100%;
+                }}
+                th, td {{
+                    border: 1px solid #999;
+                    padding: 4px;
+                }}
+                th {{
+                    background-color: #eee;
+                    font-weight: bold;
+                }}
+            </style>
+        </head>
+        <body>
+            {html_table}
+        </body>
+        </html>
+        """
 
-        HTML(string=html).write_pdf(
-            output
-        )  # convertit le html en pdf et sauvegarde dans output
+        document = QTextDocument()
+        document.setHtml(html)
 
-        return output  # retourne le chemin du fichier pdf créé
+        printer = QPrinter(QPrinter.PrinterMode.HighResolution)
+        printer.setOutputFormat(QPrinter.OutputFormat.PdfFormat)
+        printer.setOutputFileName(str(output))
+
+        document.print(printer)
+
+        return output
 
     @staticmethod
     def xlsx_to_csv(source):
-
         output = Utils.output_file_name("xlsx_to_csv", "csv")
         Utils.creer_fichier(output)
 
         df = pd.read_excel(source)
-        df.to_csv(
-            output, index=False
-        )  # convertit le tableau en csv et sauvegarde dans output
+        df.to_csv(output, index=False)
 
         return output

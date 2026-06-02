@@ -9,6 +9,7 @@ from viewer import Viewer
 import logging as log
 import config.config
 import sys
+from config.config import SYSTEM
 
 
 class Main:
@@ -16,16 +17,29 @@ class Main:
         self.log = log.getLogger(__name__)
         self.log.info("Starting Disk2Pi...")
         self.args = args
+        self.input_file = None
+        self.first_input_file = None
 
         if len(args) == 0:
-            self.log.error(
-                "No arguments provided. Exiting."
+            self.log.info(
+                "No arguments provided. basic_overlay will be used. You can provide an input file as an argument to use the corresponding viewer and overlay."
             )  # can be replaced by another action
-            return
+
         if len(args) == 1:
             self.log.info("Only one argument provided. Assuming it's the input file.")
             self.first_input_file = args[0]
-            self.input_file = str(config.config.OUTPUT_DIR) + args[0].split("/")[-1]
+            if SYSTEM == "linux":
+                self.input_file = str(config.config.OUTPUT_DIR) + args[0].split("/")[-1]
+            elif SYSTEM == "windows":
+                self.input_file = (
+                    str(config.config.OUTPUT_DIR) + args[0].split("\\")[-1]
+                )
+            else:
+                self.input_file = str(config.config.OUTPUT_DIR) + args[0].split("/")[-1]
+                self.log.warning(
+                    f"Unknown system: {SYSTEM}. Defaulting to Linux path handling."
+                )
+
             print(f"Input file: {self.input_file}")
             Utils.save_file(args[0], self.input_file)
             config.config.INPUT_FILE = self.input_file
@@ -52,11 +66,12 @@ class Main:
             else:
                 self.log.error(f"Unsupported file type: {extension}")
                 return
-        else:
-            self.log.error(
-                "Too many arguments provided. Exiting."
-            )  # can be replaced by another action
+        elif len(args) >= 2:
+            self.log.error("Too many arguments provided. Exiting.")
             return
+        else:
+            self.log.info("No arguments provided.")
+            file_type = None
 
         self.app = QApplication([])
         self.main = MainWindow()
@@ -69,7 +84,7 @@ class Main:
             self.main,
             self.viewer,
         )
-        config.config.CURRENT_MAINWINDOW=self.main
+        config.config.CURRENT_MAINWINDOW = self.main
         self.main.show()
         self.app.exec()
 

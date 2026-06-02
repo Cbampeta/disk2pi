@@ -5,6 +5,11 @@ from config.config import prev, MY_DIR, OUTPUT_DIR
 import subprocess
 import shutil
 
+import platform
+import shutil
+import sys
+from pathlib import Path
+
 
 class Utils:
     def __init__(self) -> None:
@@ -41,12 +46,31 @@ class Utils:
         print(f"Opening file: {file_path} with uv run main.py")
 
     @staticmethod
+    def restart_app_with_file(file_path: str):
+        file_path = str(Path(file_path).resolve())
+
+        if getattr(sys, "frozen", False):
+            # Mode PyInstaller :
+            # sys.executable = chemin vers Disk2Pi.exe ou ./Disk2Pi
+            command = [sys.executable, file_path]
+        else:
+            # Mode développement :
+            # on relance le script Python courant
+            command = [sys.executable, "-m", "disk2pi.main", file_path]
+
+        logging.info(f"Restarting app with command: {command}")
+        subprocess.Popen(command)
+
+    @staticmethod
     def open_file(file_path):
-        subprocess.Popen(["uv", "run", "main.py", file_path])
+        Utils.restart_app_with_file(file_path)
+
         import config.config
-        config.config.CURRENT_MAINWINDOW.close()
-        logging.info(f"Opening file: {file_path} with uv run main.py")
-        
+
+        if config.config.CURRENT_MAINWINDOW is not None:
+            config.config.CURRENT_MAINWINDOW.close()
+
+        logging.info(f"Opening file: {file_path}")
 
     @staticmethod
     def save_file(file_path, where_to_save):
@@ -59,3 +83,32 @@ class Utils:
                 logging.error(f"Error saving file: {e}")
         else:
             logging.error(f"File not found: {file_path}")
+
+    @staticmethod
+    def get_ffmpeg_path() -> str:
+        system = platform.system().lower()
+
+        if system == "windows":
+            bundled = Utils.resource_path("ffmpeg/ffmpeg.exe")
+        elif system == "linux":
+            bundled = Utils.resource_path("ffmpeg/ffmpeg")
+        else:
+            raise RuntimeError(f"Système non supporté : {platform.system()}")
+
+        if bundled.exists():
+            if system == "linux":
+                bundled.chmod(bundled.stat().st_mode | 0o111)
+            return str(bundled)
+
+        fallback = shutil.which("ffmpeg")
+        if fallback:
+            return fallback
+
+        raise RuntimeError("FFmpeg introuvable.")
+
+    @staticmethod
+    def resource_path(relative_path: str) -> Path:
+        if getattr(sys, "frozen", False):
+            return Path(sys._MEIPASS) / relative_path
+
+        return Path(__file__).resolve().parents[2] / relative_path

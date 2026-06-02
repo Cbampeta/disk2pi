@@ -1,19 +1,16 @@
 from PIL import Image
 import logging
 import os
-
-# import cv2
 import numpy as np
 from collections import Counter
-from config.config import OUTPUT_DIR, prev
-from PySide6.QtGui import QPixmap, QTransform
-import PySide6.QtGui
-import PySide6.QtCore
+import PySide6
+from PySide6.QtGui import QPixmap
 from PySide6.QtWidgets import QDialog
-import time
 from PySide6.QtCore import Qt
 from PySide6.QtWidgets import QApplication
 from .utils import Utils
+from PySide6.QtWidgets import QLabel, QVBoxLayout, QRubberBand
+from PySide6.QtCore import QPoint, QRect, QSize
 
 
 class ImageUtils:
@@ -54,7 +51,7 @@ class ImageUtils:
                 "params": {"angle": {"type": "int", "label": "Angle", "default": 90}},
             },
             "decoupage": {
-                "function": self.decoupage,
+                "function": self.crop,
                 "label": "Découpage",
                 "params": {
                     "x": {"type": "int", "label": "X", "default": 0},
@@ -66,9 +63,6 @@ class ImageUtils:
             "negate": {"function": self.negate_image, "label": "Négatif", "params": {}},
         }
 
-    @staticmethod
-    def decoupage():
-        pass
 
     @staticmethod
     def conversion(image_path, output_format="png"):
@@ -194,7 +188,7 @@ class ImageUtils:
 
         try:
             img = Image.open(image_path)
-            inverted = Image.eval(img, lambda x: 255 - x)
+            inverted = Image.eval(img, lambda x: 255 - x) #On inverse la couleur de chaque pixel de l'image
 
             output_path = Utils.output_file_name("negate", "png")
             inverted.save(output_path)
@@ -206,35 +200,6 @@ class ImageUtils:
             log.error(f"Error negating image: {e}")
             raise
 
-    @staticmethod
-    def initUI(self):
-        self.setPixmap(QPixmap("input.png"))
-        return
-
-    @staticmethod
-    def mousePressEvent(self, eventQMouseEvent):
-        self.originQPoint = eventQMouseEvent.pos()
-        self.currentQRubberBand = PySide6.QRubberBand(
-            PySide6.QtGui.QRubberBand.Rectangle, self
-        )
-        self.currentQRubberBand.setGeometry(
-            PySide6.QtCore.QRect(self.originQPoint, PySide6.QtCore.QSize())
-        )
-        self.currentQRubberBand.show()
-
-    @staticmethod
-    def mouseMoveEvent(self, eventQMouseEvent):
-        self.currentQRubberBand.setGeometry(
-            PySide6.QtCore.QRect(self.originQPoint, eventQMouseEvent.pos()).normalized()
-        )
-
-    @staticmethod
-    def mouseReleaseEvent(self, eventQMouseEvent):
-        self.currentQRubberBand.hide()
-        currentQRect = self.currentQRubberBand.geometry()
-        self.currentQRubberBand.deleteLater()
-        cropQPixmap = self.pixmap().copy(currentQRect)
-        cropQPixmap.save("output.png")
 
     @staticmethod
     def crop(image_path):
@@ -254,12 +219,11 @@ class ImageUtils:
             raise
 
 
-from PySide6.QtWidgets import QDialog, QLabel, QVBoxLayout, QRubberBand
-from PySide6.QtGui import QPixmap
-from PySide6.QtCore import QPoint, QRect, QSize
+
 
 
 class CropDialog(QDialog):
+    #cette classe permet de gérer le QRubberBand avec la souris pour sélectionner manuellement la taille du rognage
     def __init__(self, image_path):
         super().__init__()
         self.cropped_pixmap = None

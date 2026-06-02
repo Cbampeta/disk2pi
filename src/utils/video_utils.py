@@ -14,7 +14,7 @@ from PySide6.QtWidgets import (
 )
 
 from PySide6.QtCore import QUrl, Qt
-from config import FFMPEG_PATH
+from config.config import FFMPEG_PATH
 
 
 class VideoUtils:

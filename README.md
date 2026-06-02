@@ -6,8 +6,10 @@ disk2pi is a tool that processes various types of documents.
 
 - Supports multiple input formats:
   - PDF documents
-  - Videos (`.mp4`)
-  - Images (`.png`)
+  - Videos 
+  - Images 
+  - HTML
+  - XLSX
 - Simple interface using PySide6
 - Fast build and execution using `uv`
 

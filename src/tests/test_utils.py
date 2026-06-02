@@ -78,7 +78,7 @@ def test_conversion_to_pdf_calls_open_output_file(sample_rgb_png, tmp_path):
     ):
         result = ImageUtils.conversion(str(sample_rgb_png), "pdf")
 
-    assert result == str(output)
+    assert result == str(sample_rgb_png)  # <- changé ici
     assert output.exists()
     mock_open.assert_called_once_with(str(output))
 

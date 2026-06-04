@@ -63,12 +63,20 @@ class ImageUtils:
             "negate": {"function": self.negate_image, "label": "Négatif", "params": {}},
         }
 
-
     @staticmethod
     def conversion(image_path, output_format="png"):
 
         img = Image.open(image_path)
-        output = Utils.output_file_name("conversion", output_format)
+        if output_format.upper() == "PDF":
+            output = Utils.output_file_name(
+                "conversion", output_format, keep_history=False
+            )
+        else:
+            output = Utils.output_file_name(
+                "conversion", output_format, keep_history=True
+            )
+
+        # car si on converti en pdf on veut pouvoir l'ouvrire dans la nouvelle fenêtre.
         Utils.creer_fichier(output)
         if output_format.upper() == "JPEG" and img.mode in ("RGBA", "P"):
             img = img.convert("RGB")
@@ -188,7 +196,9 @@ class ImageUtils:
 
         try:
             img = Image.open(image_path)
-            inverted = Image.eval(img, lambda x: 255 - x) #On inverse la couleur de chaque pixel de l'image
+            inverted = Image.eval(
+                img, lambda x: 255 - x
+            )  # On inverse la couleur de chaque pixel de l'image
 
             output_path = Utils.output_file_name("negate", "png")
             inverted.save(output_path)
@@ -199,7 +209,6 @@ class ImageUtils:
         except Exception as e:
             log.error(f"Error negating image: {e}")
             raise
-
 
     @staticmethod
     def crop(image_path):
@@ -219,11 +228,8 @@ class ImageUtils:
             raise
 
 
-
-
-
 class CropDialog(QDialog):
-    #cette classe permet de gérer le QRubberBand avec la souris pour sélectionner manuellement la taille du rognage
+    # cette classe permet de gérer le QRubberBand avec la souris pour sélectionner manuellement la taille du rognage
     def __init__(self, image_path):
         super().__init__()
         self.cropped_pixmap = None
@@ -235,14 +241,13 @@ class CropDialog(QDialog):
         scaled_pixmap = self._original_pixmap.scaled(
             max_size,
             Qt.AspectRatioMode.KeepAspectRatio,
-            Qt.TransformationMode.SmoothTransformation
+            Qt.TransformationMode.SmoothTransformation,
         )
         self.label = QLabel(self)
         self.label.setPixmap(scaled_pixmap)
         layout = QVBoxLayout(self)
         layout.addWidget(self.label)
         self.setFixedSize(scaled_pixmap.size())
-            
 
     def mousePressEvent(self, event):
         self.originQPoint = event.position().toPoint()

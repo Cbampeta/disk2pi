@@ -1,7 +1,7 @@
 import logging
 import os
 import time
-from config.config import prev, MY_DIR, OUTPUT_DIR
+from config.config import prev, MY_DIR, OUTPUT_DIR, SESSION_FILES
 import subprocess
 import shutil
 
@@ -35,9 +35,15 @@ class Utils:
         return dst
 
     @staticmethod
-    def output_file_name(action, extension):
+    def output_file_name(action, extension, keep_history=True):
         file_name = str(OUTPUT_DIR) + f"/{int(time.time())}_{action}.{extension}"
+        # Historique utilisé pour revenir à une version précédente
         prev.append(file_name)
+
+        # Liste utilisée pour supprimer les fichiers à la fermeture
+        if keep_history:
+            SESSION_FILES.append(file_name)
+
         return file_name
 
     @staticmethod
@@ -127,3 +133,46 @@ class Utils:
             return Path(sys._MEIPASS) / relative_path
 
         return Path(__file__).resolve().parents[2] / relative_path
+
+    @staticmethod
+    def cleanup_session_files(keep_first=True):
+        """
+        Supprime les fichiers temporaires créés pendant la session.
+
+        Si keep_first vaut True, la première copie du fichier ouvert
+        est conservée.
+        """
+        output_dir = Path(OUTPUT_DIR).resolve()
+
+        # dict.fromkeys permet de supprimer les éventuels doublons
+        session_files = list(dict.fromkeys(SESSION_FILES))
+
+        files_to_delete = session_files[1:] if keep_first else session_files
+
+        for file_path in files_to_delete:
+            path = Path(file_path).resolve()
+
+            try:
+                # Sécurité : on ne supprime que des fichiers situés dans output
+                path.relative_to(output_dir)
+            except ValueError:
+                logging.warning(
+                    f"Suppression ignorée : le fichier n'est pas dans output : {path}"
+                )
+                continue
+
+            try:
+                path.unlink(missing_ok=True)
+                logging.info(f"Fichier temporaire supprimé : {path}")
+            except PermissionError:
+                logging.warning(
+                    f"Impossible de supprimer le fichier encore utilisé : {path}"
+                )
+            except OSError as error:
+                logging.warning(f"Erreur lors de la suppression de {path} : {error}")
+
+        # La liste est réinitialisée pour refléter les fichiers encore présents
+        if keep_first and session_files:
+            SESSION_FILES[:] = [session_files[0]]
+        else:
+            SESSION_FILES.clear()

@@ -7,9 +7,6 @@ import shutil
 import logging
 
 
-
-
-
 SYSTEM = platform.system().lower()
 
 
@@ -54,7 +51,11 @@ MY_DIR = "/".join(MY_DIR) + "/"
 
 
 INPUT_FILE = None
+# Historique utilisé par la fonction Annuler
 prev = []
+
+# Liste de tous les fichiers créés pendant la session
+SESSION_FILES = []
 
 
 MINIMUM_SIZE_HEIGHT = 100

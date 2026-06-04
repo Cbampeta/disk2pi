@@ -29,10 +29,12 @@ class Main:
             self.log.info("Only one argument provided. Assuming it's the input file.")
             self.first_input_file = args[0]
             if SYSTEM == "linux":
-                self.input_file = str(config.config.OUTPUT_DIR) + args[0].split("/")[-1]
+                self.input_file = (
+                    str(config.config.OUTPUT_DIR) + "/" + args[0].split("/")[-1]
+                )
             elif SYSTEM == "windows":
                 self.input_file = (
-                    str(config.config.OUTPUT_DIR) + args[0].split("\\")[-1]
+                    str(config.config.OUTPUT_DIR) + "\\" + args[0].split("\\")[-1]
                 )
             else:
                 self.input_file = str(config.config.OUTPUT_DIR) + args[0].split("/")[-1]
@@ -44,6 +46,7 @@ class Main:
             Utils.save_file(args[0], self.input_file)
             config.config.INPUT_FILE = self.input_file
             config.config.prev.append(self.input_file)
+            config.config.SESSION_FILES.append(self.input_file)
             extension = self.input_file.split(".")[-1]
             if extension == "pdf":
                 file_type = "PDF"
@@ -86,7 +89,10 @@ class Main:
         )
         config.config.CURRENT_MAINWINDOW = self.main
         self.main.show()
-        self.app.exec()
+        try:
+            self.app.exec()
+        finally:
+            Utils.cleanup_session_files(keep_first=False)
 
 
 def main():

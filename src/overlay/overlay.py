@@ -1,5 +1,3 @@
-from tkinter import NO
-
 from PySide6.QtWidgets import (
     QDialog,
     QVBoxLayout,

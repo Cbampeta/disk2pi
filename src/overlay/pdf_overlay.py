@@ -1,6 +1,7 @@
 import logging
 
 from utils import PDFUtils
+from config.config import SESSION_FILES
 import threading
 
 
@@ -10,7 +11,7 @@ class PDFOverlay:
         self.menu = overlay.menu
         self.log = logging.getLogger(__name__)
         self.log.info("Initializing PDFOverlay...")
-
+        self.overlay = overlay
         self.pdf_to_text_running = False
 
         self.init_conversion_panel()
@@ -28,12 +29,18 @@ class PDFOverlay:
         self.log.info("Starting PDF to Text conversion in a separate thread...")
         self.pdf_to_text_running = True
 
-
         def run_conversion():
             try:
-                PDFUtils.pdf_to_txt(self.input_file)
+                name = PDFUtils.pdf_to_txt(self.input_file)
+                self.overlay.save_as(input_file=name)  # Save the converted text file
+                SESSION_FILES.append(
+                    name
+                )  # Add the new file to the session for cleanup
+                print(f"session files after conversion: {SESSION_FILES} ")
+                self.log.info(f"PDF to Text conversion completed: {name}")
+
             finally:
                 self.pdf_to_text_running = False
                 self.log.info("PDF to Text conversion finished.")
 
-        threading.Thread(target=run_conversion).start()
+        run_conversion()

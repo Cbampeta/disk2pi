@@ -1,3 +1,5 @@
+from tkinter import NO
+
 from PySide6.QtWidgets import (
     QDialog,
     QVBoxLayout,
@@ -27,6 +29,7 @@ from .audio_overlay import AudioOverlay
 from .html_overlay import HTMLOverlay
 from .xlsx_overlay import XLSXOverlay
 from PySide6.QtGui import QAction
+from pathlib import Path
 
 # from config.config import INPUT_FILE
 import config.config
@@ -110,12 +113,19 @@ class Overlay:
         self.actSave.triggered.connect(
             lambda: Utils.save_file(self.input_file, self.first_input_file)
         )
+        self.actSaveAs = QAction("Save As", self.mainWindow)
+        self.actSaveAs.setShortcut("Ctrl+Shift+S")
+        self.actSaveAs.setStatusTip("Save the current file under a new name")
+        self.actSaveAs.triggered.connect(
+            lambda: self.save_as(input_file=self.input_file)
+        )
 
         self.actBrowse = QAction("Open", self.mainWindow)
         self.actBrowse.setStatusTip("Open")
         self.actBrowse.triggered.connect(self.browse)
         self.actBrowse.setShortcut("Ctrl+o")
         self.file.addAction(self.actSave)
+        self.file.addAction(self.actSaveAs)
         self.file.addAction(self.actCancel)
         self.file.addAction(self.actExit)
         self.file.addAction(self.actBrowse)
@@ -350,3 +360,49 @@ class Overlay:
                 "Erreur",
                 f"Impossible d'exécuter la fonction '{func_name}'.\n\n{e}",
             )
+
+    def save_as(self, input_file=None):
+        """
+        Enregistre une copie de la version actuellement affichée
+        à l'emplacement choisi par l'utilisateur.
+        """
+        if input_file is None:
+            input_file = self.input_file
+
+        print(f"Saving file: {input_file} with save_as function")
+        if not input_file:
+            QMessageBox.warning(
+                self.mainWindow,
+                "Enregistrement impossible",
+                "Aucun fichier n'est actuellement ouvert.",
+            )
+            return
+
+        current_path = Path(input_file)
+        extension = current_path.suffix
+
+        suggested_name = current_path.stem + extension
+
+        output_path, _ = QFileDialog.getSaveFileName(
+            self.mainWindow,
+            "Enregistrer sous",
+            suggested_name,
+            f"Fichiers {extension} (*{extension});;Tous les fichiers (*)",
+        )
+
+        if not output_path:
+            return
+
+        destination = Path(output_path)
+
+        # Ajoute automatiquement l'extension si l'utilisateur ne l'a pas saisie.
+        if not destination.suffix:
+            destination = destination.with_suffix(extension)
+
+        Utils.save_file(input_file, str(destination))
+
+        QMessageBox.information(
+            self.mainWindow,
+            "Enregistrement terminé",
+            f"Le fichier a été enregistré sous :\n{destination}",
+        )
